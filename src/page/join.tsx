@@ -1,24 +1,22 @@
 import React, { memo, useState, useCallback, FormEvent, InvalidEvent } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
-import classNames from "classnames";
+
+// 미디어쿼리
+import mq from "../MediaQuery";
 
 const Container = styled.div`
-    width: 100%;
-    height: 100%;
-    background-color: #abdff1;
     display: flex;
     align-items: center;
     justify-content: center;
-
     .box {
         width: 500px;
         height: 600px;
         background-color: #fff;
 
         form {
-			width: 100%;
-			height: 100%;
+            width: 100%;
+            height: 100%;
             padding: 50px 20px 0;
             box-sizing: border-box;
 
@@ -29,7 +27,7 @@ const Container = styled.div`
             }
 
             .input {
-				height: 61px;
+                height: 61px;
                 display: flex;
                 flex-direction: column;
                 margin-bottom: 20px;
@@ -41,97 +39,101 @@ const Container = styled.div`
                 input {
                     outline: none;
 
-					&.invalid + p {
-						display: block;
-					}
+                    &.invalid + p {
+                        display: block;
+                    }
 
-					&.password ~ p.pass {
-						display: block;
-					}
+                    &.password ~ p.pass {
+                        display: block;
+                    }
 
-					&.idcheck ~ p.id {
-						display: block;
-					}
+                    &.idcheck ~ p.id {
+                        display: block;
+                    }
                 }
 
-				p.error {
-					font-size: 12px;
-					text-align: left;
-					margin-bottom: 0;
-					color: #f00;
-					display: none;
+                p.error {
+                    font-size: 12px;
+                    text-align: left;
+                    margin-bottom: 0;
+                    color: #f00;
+                    display: none;
 
-					&.visible {
-						display: block;
-					}
-				}
+                    &.visible {
+                        display: block;
+                    }
+                }
             }
 
             .login {
-				height: auto;
+                height: auto;
                 p {
                     font-size: 12px;
                 }
             }
 
             .button {
-				text-align: center;
-				height: auto;
+                text-align: center;
+                height: auto;
 
                 button {
-					margin-top: 20px;
+                    margin-top: 20px;
                     border: none;
                     outline: none;
                     width: 150px;
                     height: 50px;
 
-					&:hover {
-						cursor: pointer;
-					}
+                    &:hover {
+                        cursor: pointer;
+                    }
                 }
             }
         }
     }
+
+    ${mq.maxWidth("sm")`
+		.box {
+			width: 80%;
+		}
+	`}
 `;
 
 const join = memo(() => {
+    const errorText = useCallback((e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const current = e.currentTarget;
+        const passCheck = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+        const idCheck = /^[a-zA-z0-9]{4,20}$/;
 
-	const errorText = useCallback((e: FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const current = e.currentTarget;
-		const passCheck = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
-		const idCheck = /^[a-zA-z0-9]{4,20}$/;
+        const name: string = current.nickname.value;
+        const id: string = current.userid.value;
+        const password: string = current.password.value;
+        const passwordCheck: string = current.passwordCheck.value;
 
-		const name: string = current.nickname.value;
-		const id: string = current.userid.value;
-		const password: string = current.password.value;
-		const passwordCheck: string = current.passwordCheck.value;
+        if (!passCheck.test(password)) {
+            current.password.classList.add("password");
+        }
 
-		if (!passCheck.test(password)) {
-			current.password.classList.add('password');
-		}
+        if (!idCheck.test(id)) {
+            current.userid.classList.add("idcheck");
+        }
+    }, []);
 
-		if (!idCheck.test(id)) {
-			current.userid.classList.add('idcheck');
-		}
-		
-	}, []);
+    const required = useCallback((e: InvalidEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const value: string = e.target.value;
 
-	const required = useCallback((e: InvalidEvent<HTMLInputElement>) => {
-		e.preventDefault();
-		const value: string = e.target.value;
+        if (value.length == 0 || value.trim().length == 0 || value == "" || value == null || value == undefined) {
+            e.target.classList.add("invalid");
+        }
+    }, []);
 
-		if (value.length == 0 || value.trim().length == 0 || value == '' || value == null || value == undefined) {
-			e.target.classList.add('invalid');
-		}
-	}, []);
-
-	const requiredRemove = useCallback((e: InvalidEvent<HTMLInputElement>) => {
-		e.preventDefault();
-		e.target.classList.remove('invalid');
-		e.target.classList.remove('password');
-		e.target.classList.remove('idcheck');
-	}, []);
+    const requiredRemove = useCallback((e: InvalidEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        e.target.classList.remove("invalid");
+        e.target.classList.remove("password");
+        e.target.classList.remove("idcheck");
+    }, []);
 
     return (
         <Container>
@@ -140,25 +142,25 @@ const join = memo(() => {
                     <p>회원가입</p>
                     <div className="input">
                         <label htmlFor="name">이름: </label>
-                        <input type="text" id="name" name="nickname" required onInvalid={required} onFocus={requiredRemove}/>
-						<p className='error'>이름을 입력해주세요.</p>
+                        <input type="text" id="name" name="nickname" required onInvalid={required} onFocus={requiredRemove} />
+                        <p className="error">이름을 입력해주세요.</p>
                     </div>
                     <div className="input">
                         <label htmlFor="id">아이디: </label>
                         <input type="text" id="id" name="userid" required onInvalid={required} onFocus={requiredRemove} />
-						<p className='error'>아이디를 입력해주세요.</p>
-						<p className='error id'>아이디는 영문자, 숫자 조합으로 4~20자리까지 가능합니다.</p>
+                        <p className="error">아이디를 입력해주세요.</p>
+                        <p className="error id">아이디는 영문자, 숫자 조합으로 4~20자리까지 가능합니다.</p>
                     </div>
                     <div className="input">
                         <label htmlFor="password">비밀번호: </label>
                         <input type="text" id="password" name="password" required onInvalid={required} onFocus={requiredRemove} />
-						<p className='error'>비밀번호를 입력해주세요.</p>
-						<p className='error pass'>비밀번호는 영문자, 숫자, 특수문자 조합으로 8~25자리까지 가능합니다.</p>
+                        <p className="error">비밀번호를 입력해주세요.</p>
+                        <p className="error pass">비밀번호는 영문자, 숫자, 특수문자 조합으로 8~25자리까지 가능합니다.</p>
                     </div>
                     <div className="input">
                         <label htmlFor="passwordCheck">비밀번호 확인: </label>
                         <input type="text" id="passwordCheck" name="passwordCheck" required onInvalid={required} onFocus={requiredRemove} />
-						<p className='error'>비밀번호를 확인해주세요.</p>
+                        <p className="error">비밀번호를 확인해주세요.</p>
                     </div>
                     <div className="login">
                         <p>

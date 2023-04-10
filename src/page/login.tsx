@@ -2,14 +2,13 @@ import React, { memo } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
+// 미디어쿼리
+import mq from "../MediaQuery";
+
 const Container = styled.div`
-    width: 100%;
-    height: 100%;
-    background-color: #abdff1;
     display: flex;
     align-items: center;
     justify-content: center;
-
     .box {
         width: 500px;
         height: 450px;
@@ -46,27 +45,33 @@ const Container = styled.div`
             }
 
             .button {
-				text-align: center;
+                text-align: center;
 
                 button {
-					margin-top: 20px;
+                    margin-top: 20px;
                     border: none;
                     outline: none;
                     width: 150px;
                     height: 50px;
 
-					&:hover {
-						cursor: pointer;
-					}
+                    &:hover {
+                        cursor: pointer;
+                    }
                 }
             }
         }
     }
+
+    ${mq.maxWidth("sm")`
+		.box {
+			width: 80%;
+		}
+	`}
 `;
 
 const login = memo(() => {
-	return (
-		<Container>
+    return (
+        <Container>
             <div className="box">
                 <form>
                     <p>로그인</p>
@@ -89,7 +94,7 @@ const login = memo(() => {
                 </form>
             </div>
         </Container>
-	);
+    );
 });
 
 export default login;

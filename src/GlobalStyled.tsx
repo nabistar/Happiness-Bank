@@ -2,10 +2,10 @@ import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 
 // 폰트
-import mapleLight from './assets/font/Maplestory-Light.ttf';
-import mapleBold from './assets/font/Maplestory-Bold.ttf';
-import bingBold from './assets/font/Binggrae-Bold.ttf';
-import bing from './assets/font/Binggrae.ttf';
+import mapleLight from "./assets/font/Maplestory-Light.ttf";
+import mapleBold from "./assets/font/Maplestory-Bold.ttf";
+import bingBold from "./assets/font/Binggrae-Bold.ttf";
+import bing from "./assets/font/Binggrae.ttf";
 
 const GlobalStyles = createGlobalStyle`
     ${reset}
@@ -49,9 +49,19 @@ const GlobalStyles = createGlobalStyle`
 				width: 100%;
 				height: 100%;
 
-				p, input, textarea, a, label, button {
-					font-family: 'bing', 'sans-serif';
-					color: #0C4A60;
+				div {
+					width: 100%;
+					height: 100%;
+					background-color: #abdff1;
+					
+					div {
+						background-color: transparent;
+					}
+
+					p, input, textarea, a, label, button {
+						font-family: 'bing', 'sans-serif';
+						color: #0C4A60;
+					}
 				}
 			}
 		}
