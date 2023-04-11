@@ -99,7 +99,7 @@ const Container = styled.div`
 `;
 
 const join = memo(() => {
-    const errorText = useCallback((e: FormEvent<HTMLFormElement>) => {
+    const formSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const current = e.currentTarget;
         const passCheck = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
@@ -138,7 +138,7 @@ const join = memo(() => {
     return (
         <Container>
             <div className="box">
-                <form onSubmit={errorText}>
+                <form onSubmit={formSubmit}>
                     <p>회원가입</p>
                     <div className="input">
                         <label htmlFor="name">이름: </label>

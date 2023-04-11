@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useState, useCallback, FormEvent, InvalidEvent } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
@@ -35,6 +35,22 @@ const Container = styled.div`
 
                 input {
                     outline: none;
+
+					&.invalid + p {
+                        display: block;
+                    }
+                }
+
+				p.error {
+                    font-size: 12px;
+                    text-align: left;
+                    margin-bottom: 0;
+                    color: #f00;
+                    display: none;
+
+                    &.visible {
+                        display: block;
+                    }
                 }
             }
 
@@ -70,18 +86,43 @@ const Container = styled.div`
 `;
 
 const login = memo(() => {
+
+	const formSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const current = e.currentTarget;
+        
+    }, []);
+
+	const required = useCallback((e: InvalidEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        const value: string = e.target.value;
+
+        if (value.length == 0 || value.trim().length == 0 || value == "" || value == null || value == undefined) {
+            e.target.classList.add("invalid");
+        }
+    }, []);
+
+    const requiredRemove = useCallback((e: InvalidEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        e.target.classList.remove("invalid");
+        e.target.classList.remove("password");
+        e.target.classList.remove("idcheck");
+    }, []);
+
     return (
         <Container>
             <div className="box">
-                <form>
+                <form onSubmit={formSubmit}>
                     <p>로그인</p>
                     <div className="input">
                         <label htmlFor="id">아이디: </label>
-                        <input type="text" id="id" required />
+                        <input type="text" id="id" required onInvalid={required} onFocus={requiredRemove} />
+						<p className="error">아이디를 입력해주세요.</p>
                     </div>
                     <div className="input">
                         <label htmlFor="password">비밀번호: </label>
-                        <input type="text" id="password" required />
+                        <input type="text" id="password" required onInvalid={required} onFocus={requiredRemove} />
+						<p className="error">비밀번호를 입력해주세요.</p>
                     </div>
                     <div className="join">
                         <p>
