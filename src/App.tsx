@@ -6,6 +6,7 @@ import Info from './page/info';
 import Join from './page/join';
 import Login from './page/login';
 import Main from './page/main';
+import Write from './page/write';
 
 const App = memo(() => {
 	return (
@@ -14,6 +15,7 @@ const App = memo(() => {
 			<Route path="/join" element={<Join />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/main" element={<Main />} />
+			<Route path="/write" element={<Write />} />
 		</Routes>
 	);
 });
