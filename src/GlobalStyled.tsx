@@ -2,40 +2,27 @@ import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
 
 // 폰트
-import mapleLight from "./assets/font/Maplestory-Light.ttf";
-import mapleBold from "./assets/font/Maplestory-Bold.ttf";
-import bingBold from "./assets/font/Binggrae-Bold.ttf";
-import bing from "./assets/font/Binggrae.ttf";
+import dream3 from "./assets/font/SCDream3.otf";
+import dream5 from "./assets/font/SCDream5.otf";
+
+// 배경
+import back from "./assets/img/back.png";
 
 const GlobalStyles = createGlobalStyle`
     ${reset}
 
 	@font-face {
-		font-family: 'maple';
+		font-family: 'dream';
 		font-style: normal;
-		font-weight: normal;
-		src: url(${mapleLight}) format('truetype');
+		font-weight: 300;
+		src: url(${dream3}) format('opentype');
 	}
 
 	@font-face {
-		font-family: 'maple';
+		font-family: 'dream';
 		font-style: normal;
-		font-weight: 700;
-		src: url(${mapleBold}) format('truetype');
-	}
-
-	@font-face {
-		font-family: 'bing';
-		font-style: normal;
-		font-weight: normal;
-		src: url(${bing}) format('truetype');
-	}
-
-	@font-face {
-		font-family: 'bing';
-		font-style: normal;
-		font-weight: 700;
-		src: url(${bingBold}) format('truetype');
+		font-weight: 500;
+		src: url(${dream5}) format('opentype');
 	}
 
 	html {
@@ -52,15 +39,15 @@ const GlobalStyles = createGlobalStyle`
 				div {
 					width: 100%;
 					height: 100%;
-					background-color: #abdff1;
+					background: url(${back});
 					
 					div {
-						background-color: transparent;
+						background: none;
 					}
 
 					p, input, textarea, a, label, button {
-						font-family: 'bing', 'sans-serif';
-						color: #0C4A60;
+						font-family: 'dream', 'sans-serif';
+						font-weight: 300;
 					}
 				}
 			}

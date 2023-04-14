@@ -2,52 +2,80 @@ import React, { memo } from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
+// 미디어 쿼리
+import mq from "../MediaQuery";
+
+// 로고
+import mainLogo from "../assets/img/mainLogo.png";
+
 const Container = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
     .box {
         width: 500px;
-        height: 300px;
+        height: 100%;
+        position: relative;
+        display: flex;
+        align-items: center;
 
-        p {
-            text-align: center;
-            margin-bottom: 70px;
+        .logo {
+            width: 100%;
+            height: auto;
 
-            &:first-child#title {
-                font-family: "maple", "sans-serif";
-                font-size: 70px;
-                font-weight: 700;
+            img {
+                width: 100%;
             }
         }
 
         .button {
             display: flex;
             justify-content: center;
+            margin-top: 200px;
+            height: auto;
+            position: absolute;
+            bottom: 50px;
 
             a {
                 display: block;
                 text-decoration: none;
-                font-weight: bold;
+                font-size: 22px;
+                font-weight: 500;
+                color: #fde368;
                 width: 100px;
                 height: 50px;
-                background-color: #fff;
-                border-radius: 20%;
-                margin-right: 10px;
                 text-align: center;
                 padding-top: 17px;
                 box-sizing: border-box;
+
+                &:first-child {
+                    margin-right: 100px;
+                }
             }
         }
     }
+
+    ${mq.maxWidth("sm")`
+		.box {
+			width: 300px;
+
+			.button {
+				a {
+					font-size: 18px;
+				}
+			}
+		}
+
+	`}
 `;
 
 const info = memo(() => {
     return (
         <Container>
             <div className="box">
-                <p id="title">행복 저금통</p>
-                <p>오늘 있었던 행복한 일을 저금해보세요.</p>
+                <div className="logo">
+                    <img src={mainLogo} alt="메인 로고" />
+                </div>
                 <div className="button">
                     <NavLink to="/login">로그인</NavLink>
                     <NavLink to="/join">회원가입</NavLink>

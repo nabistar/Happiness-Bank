@@ -7,17 +7,12 @@ import classNames from "classnames";
 import mq from "../MediaQuery";
 
 // 이미지
-import cancel from "../assets/img/cancel.png";
-import text from "../assets/img/text.png";
+import logo from "../assets/img/logo.png";
+import grid from "../assets/img/grid.png";
 
 const Container = styled.div`
     min-height: 100%;
     height: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 50px 0;
-    box-sizing: border-box;
     position: relative;
 
     .overlay {
@@ -30,246 +25,177 @@ const Container = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
-		display: none;
+        display: none;
 
-		&.pop {
-			display: flex;
-		}
+        &.pop {
+            display: flex;
+        }
 
         .logout {
             width: 400px;
             height: 200px;
             background-color: #eff9fc;
-			border: 1px solid #0c4a60;
-			padding: 60px 0;
-			box-sizing: border-box;
+            border: 1px solid #0c4a60;
+            padding: 60px 0;
+            box-sizing: border-box;
 
-			p {
-				text-align: center;
-			}
+            p {
+                text-align: center;
+            }
 
-			.logoutButton {
-				height: auto;
-				text-align: center;
-				margin-top: 40px;
+            .logoutButton {
+                height: auto;
+                text-align: center;
+                margin-top: 40px;
 
-				button {
-					width: 100px;
-					height: 30px;
-					border: 1px solid #000;
-
-					&:first-child {
-						margin-right: 20px;
-						background-color: #0c4a60;
-						color: #fff;
-					}
-
-					&:hover {
-						cursor: pointer;
-					}
-				}
-			}
-        }
-    }
-
-    .box {
-        width: 80%;
-        height: auto;
-
-        .title {
-            text-align: center;
-            font-size: 25px;
-            margin-bottom: 30px;
-            font-weight: 700;
-        }
-
-        .boxContainer {
-            height: auto;
-            background-color: #fff;
-
-            .cancel {
-                background-color: #0c4a60;
                 button {
-                    display: block;
-                    width: 30px;
+                    width: 100px;
                     height: 30px;
-                    border: none;
-                    background: url(${cancel}) center/cover;
-                    margin-left: auto;
+                    border: 1px solid #000;
+
+                    &:first-child {
+                        margin-right: 20px;
+                        background-color: #0c4a60;
+                        color: #fff;
+                    }
 
                     &:hover {
                         cursor: pointer;
                     }
                 }
             }
+        }
+    }
 
-            .nav {
-                height: auto;
-                display: flex;
-                align-items: center;
-                padding: 0 30px;
-                margin-top: 20px;
-                box-sizing: border-box;
-                flex-wrap: wrap;
-                justify-content: space-between;
+    .box {
+        width: 90%;
+        height: 100%;
+        padding: 30px 0;
+        margin: auto;
+        box-sizing: border-box;
 
-                p {
-                    text-align: center;
-                }
+        .button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            width: auto;
+            height: auto;
 
-                a {
-                    display: block;
-                    width: 150px;
-                    height: 50px;
-                    text-decoration: none;
-                    background-color: #0c4a60;
-                    color: #fff;
-                    text-align: center;
-                    padding-top: 17px;
-                    box-sizing: border-box;
-                }
-
-                .search {
-                    width: auto;
-                    height: auto;
-                    display: flex;
-                    align-items: center;
-
-                    p {
-                        margin-right: 10px;
-                    }
-                }
+            a {
+                text-decoration: none;
+                margin-right: 20px;
             }
 
-            .contentBox {
-                height: auto;
-                min-height: 550px;
-                padding: 30px;
-                box-sizing: border-box;
-                border-top: 1px solid #0c4a60;
+            button {
+                height: 30px;
+                background-color: transparent;
+                border: none;
+                outline: none;
+                font-size: 20px;
+                color: #fde368;
+            }
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+
+            p {
+                text-align: center;
                 margin-top: 20px;
+                color: #fde368;
+                font-size: 22px;
+            }
+        }
 
-                p {
-                    font-size: 20px;
-                    font-weight: 700;
-                    margin-bottom: 40px;
-                }
+        .content {
+            width: 100%;
+            height: auto;
+            background: url(${grid}) center/cover;
+            border-radius: 20%;
+            display: flex;
 
-                .content {
+            .calendar {
+				width: 70%;
+                .week {
                     display: flex;
-                    justify-content: space-between;
-                    flex-wrap: wrap;
-
-                    a {
-                        img {
-                            width: 135px;
-                            height: 135px;
-                        }
+                    p {
+                        font-weight: 500;
+                        color: #3c5230;
+                        font-size: 25px;
                     }
                 }
             }
         }
     }
-
-    ${mq.maxWidth("md")`
-		.box {
-			.boxContainer {
-				.nav {
-					
-					p {
-						width: 49%;
-					}
-
-					.search {
-						width: 49%;
-
-						p {
-							width: auto;
-						}
-					}
-
-					a {
-						margin: 30px auto 0;
-					}
-				}
-			}
-		}
-	`}
-
-    ${mq.maxWidth("sm")`
-		.box {
-			.boxContainer {
-				.nav {
-					p {
-						width: 100%;
-					}
-
-					.search {
-						width: 100%;
-						justify-content: center;
-						margin-top: 30px;
-					}
-				}
-			}
-		}
-	`}
 `;
 
 const main = memo(() => {
+    const [logout, setLogout] = useState<boolean>(false);
+    const navigate = useNavigate();
 
-	const [logout, setLogout] = useState<boolean>(false);
-	const navigate = useNavigate();
+    // 로그아웃 팝업
+    const logoutPop = useCallback(() => {
+        setLogout(true);
+        document.body.style.overflow = "hidden";
+    }, []);
 
-	// 로그아웃 팝업
-	const logoutPop = useCallback(() => {
-		setLogout(true);
-		document.body.style.overflow = "hidden";
-	}, []);
+    // 로그아웃 팝업 숨기기
+    const logoutHidden = useCallback(() => {
+        setLogout(false);
+        document.body.style.overflow = "unset";
+    }, []);
 
-	// 로그아웃 팝업 숨기기
-	const logoutHidden = useCallback(() => {
-		setLogout(false);
-		document.body.style.overflow = "unset";
-	}, []);
-
-	// 로그아웃 후 메인으로
-	const logoutAct = useCallback(() => {
-		document.body.style.overflow = "unset";
-		setLogout(false);
-		navigate("/");
-	}, []);
+    // 로그아웃 후 메인으로
+    const logoutAct = useCallback(() => {
+        document.body.style.overflow = "unset";
+        setLogout(false);
+        navigate("/");
+    }, []);
 
     return (
         <Container>
-            <div className={classNames('overlay', {pop: logout})}>
+            <div className={classNames("overlay", { pop: logout })}>
                 <div className="logout">
                     <p>로그아웃 후 메인 페이지로 돌아갈까요?</p>
                     <div className="logoutButton">
-                        <button type="button" onClick={logoutAct}>네</button>
-                        <button type="button" onClick={logoutHidden}>아니오</button>
+                        <button type="button" onClick={logoutAct}>
+                            네
+                        </button>
+                        <button type="button" onClick={logoutHidden}>
+                            아니오
+                        </button>
                     </div>
                 </div>
             </div>
             <div className="box">
-                <p className="title">닉네임님, 안녕하세요!</p>
-                <div className="boxContainer">
-                    <div className="cancel">
-                        <button type="button" onClick={logoutPop}></button>
+                <div className="button">
+                    <NavLink to="/">
+                        <button type="button">Main</button>
+                    </NavLink>
+                    <button type="button" onClick={logoutPop}>
+                        Logout
+                    </button>
+                </div>
+                <div className="title">
+                    <img src={logo} alt="logo" />
+                    <p>OOO님, 안녕하세요!</p>
+                </div>
+                <div className="content">
+                    <div className="month">
+                        <p>4</p>
+                        <p>April</p>
                     </div>
-                    <div className="nav">
-                        <p>저금된 행복: 10개</p>
-                        <div className="search">
-                            <p>저금한 날 찾기</p>
-                            <input type="date" />
-                        </div>
-                        <NavLink to="/write">저금하기</NavLink>
-                    </div>
-                    <div className="contentBox">
-                        <p>2023년 4월 10일</p>
-                        <div className="content">
-                            <NavLink to="/view">
-                                <img src={text} />
-                            </NavLink>
+                    <div className="calendar">
+                        <div className="week">
+                            <p>Sunday</p>
+                            <p>Monday</p>
+                            <p>Tuseday</p>
+                            <p>Wednesday</p>
+                            <p>Thursday</p>
+                            <p>Friday</p>
+                            <p>Saturday</p>
                         </div>
                     </div>
                 </div>
