@@ -116,8 +116,6 @@ const Container = styled.div`
         .content {
             width: 100%;
             height: auto;
-            background-color: #fff;
-            border-radius: 2%;
             display: flex;
         }
     }

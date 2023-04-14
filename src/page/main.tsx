@@ -19,36 +19,145 @@ import down from "../assets/img/down.png";
 const Container = styled.div`
     width: 100%;
     height: auto;
-	display: flex;
-	position: relative;
-	padding: 10px 30px 30px;
-	box-sizing: border-box;
+    display: flex;
+    position: relative;
+    padding: 10px 20px 30px;
+    box-sizing: border-box;
+	background-color: #fff;
+	border-radius: 10px;
+
+    .sticker {
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.5);
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        display: none;
+        border-radius: 2%;
+
+        &.open {
+            display: flex;
+        }
+
+        .stickerContainer {
+            width: 400px;
+            height: 500px;
+            background-color: #3c5230;
+            padding: 20px;
+            box-sizing: border-box;
+			position: relative;
+			border: 1px solid #000;
+
+            p {
+                color: #fde368;
+                font-size: 25px;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            .stickerBox {
+                display: flex;
+                flex-wrap: wrap;
+                width: 100%;
+                height: 350px;
+                margin: 30px 0;
+                overflow-y: auto;
+
+                &::-webkit-scrollbar {
+                    width: 5px;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background-color: #3c5230;
+                }
+
+                &::-webkit-scrollbar-track {
+                    background-color: #000;
+                }
+
+                img {
+                    width: 50px;
+                    height: 50px;
+                    margin: 0 10px 20px 0;
+                }
+            }
+
+            .stickerButton {
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                height: auto;
+
+                input {
+                    display: none;
+                }
+            }
+
+            label,
+            button {
+                font-size: 20px;
+                color: #fde368;
+                font-weight: 500;
+                padding: 0;
+                border: none;
+                outline: none;
+                background-color: transparent;
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+				&.cancelBtn {
+					position: absolute;
+					right: 3px;
+					top: 0;
+					font-size: 15px;
+					font-weight: 300;
+				}
+            }
+        }
+    }
 
     .month {
-        width: 20%;
+        width: 23%;
         display: flex;
         align-items: baseline;
+        flex-wrap: wrap;
 
         p {
             color: #3c5230;
-            font-size: 25px;
+            font-size: 20px;
+        }
 
-            &:first-child {
-                font-size: 130px;
-                font-weight: 500;
-                margin: 0 5px 0 0;
+        button {
+            font-size: 130px;
+            font-weight: 500;
+            margin: 0 5px 0 0;
+            color: #3c5230;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            padding: 0;
+
+            &:hover {
+                cursor: pointer;
             }
         }
     }
 
     .calendar {
         width: 77%;
-		height: auto;
+        height: auto;
         margin-top: 40px;
         .week {
             display: flex;
             width: 100%;
-			height: auto;
+            height: auto;
             margin-bottom: 10px;
             p {
                 width: calc(100% / 7);
@@ -64,7 +173,7 @@ const Container = styled.div`
             display: flex;
             flex-wrap: wrap;
             width: 100%;
-			height: auto;
+            height: auto;
 
             .dayBox {
                 width: calc(100% / 7);
@@ -96,36 +205,43 @@ const Container = styled.div`
         }
     }
 
-	.left, .right {
-		width: 50px;
-		height: 50px;
-		position: absolute;
-		top: 50%;
-		border: none;
-		outline: none;
+    .left,
+    .right {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 50%;
+        border: none;
+        outline: none;
 
-		&:hover {
-			cursor: pointer;
-		}
-	}
+        &:hover {
+            cursor: pointer;
+        }
+    }
 
-	.left {
-		background: url(${left}) center/cover;
-		left: -50px;
-	}
+    .left {
+        background: url(${left}) center/cover;
+        left: -50px;
+    }
 
-	.right {
-		background: url(${right}) center/cover;
-		right: -50px;
-	}
+    .right {
+        background: url(${right}) center/cover;
+        right: -50px;
+    }
 
-    ${mq.maxWidth("xl")`	
+    ${mq.maxWidth("max")`	
 		.month {
 			p {
-				font-size: 20px;
+				font-size: 16px;
+			}
 
-				&:first-child {
-					font-size: 100px;
+			button {
+				font-size: 80px;
+			}
+
+			.sticker {
+				.stickerBox {
+					height: 300px;
 				}
 			}
 		}
@@ -157,13 +273,17 @@ const Container = styled.div`
 
     ${mq.maxWidth("lg")`
 		flex-direction: column;
-		.month {
-			p {
-				font-size: 20px;
 
-				&:first-child {
-					font-size: 100px;
+		.month {
+			width: 100%;
+			margin-bottom: 50px;
+
+			.sticker {
+				width: 100%;
+				.stickerBox {
+					height: 150px;
 				}
+
 			}
 		}
 
@@ -197,12 +317,11 @@ const Container = styled.div`
 	`}
 
 	${mq.maxWidth("sm")`
-		.month {
-			p {
-				font-size: 20px;
 
-				&:first-child {
-					font-size: 80px;
+		.month {
+			.sticker {
+				.stickerBox {
+					height: 200px;
 				}
 			}
 		}
@@ -255,6 +374,7 @@ const Container = styled.div`
 
 const main = memo(() => {
     const [day, setDay] = useState({ year: dayjs().format("YYYY"), month: dayjs().format("M"), monthName: "", result: [0] });
+    const [stick, setStick] = useState<boolean>(false);
 
     // 첫 렌더링 때 달력 그리기
     useEffect(() => {
@@ -319,33 +439,78 @@ const main = memo(() => {
         [day.month],
     );
 
-	// 월 바꾸기
-	const changeMonth = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-		if(! (e.target instanceof HTMLButtonElement)) {
-			return;
-		}
-		const value = e.target.dataset.arrow;
-		let date = dayjs(`${day.year}-${day.month}`);
+    // 월 바꾸기
+    const changeMonth = useCallback(
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            if (!(e.target instanceof HTMLButtonElement)) {
+                return;
+            }
+            const value = e.target.dataset.arrow;
+            let date = dayjs(`${day.year}-${day.month}`);
 
-		if (value == "pre") {
-			date = date.add(-1, "month");
-			const dateArray = calendar(parseInt(date.format("YYYY")), parseInt(date.format("M")));
-			const name = monthName(parseInt(date.format("M")));
-			setDay({year: date.format("YYYY"), month: date.format("M"), monthName: name, result: [...dateArray]});
-		} else if (value == "next") {
-			date = date.add(1, "month");
-			const dateArray = calendar(parseInt(date.format("YYYY")), parseInt(date.format("M")));
-			const name = monthName(parseInt(date.format("M")));
-			setDay({year: date.format("YYYY"), month: date.format("M"), monthName: name, result: [...dateArray]});
-		}
-	}, [day.month, day.year]);
+            if (value == "pre") {
+                date = date.add(-1, "month");
+                const dateArray = calendar(parseInt(date.format("YYYY")), parseInt(date.format("M")));
+                const name = monthName(parseInt(date.format("M")));
+                setDay({ year: date.format("YYYY"), month: date.format("M"), monthName: name, result: [...dateArray] });
+            } else if (value == "next") {
+                date = date.add(1, "month");
+                const dateArray = calendar(parseInt(date.format("YYYY")), parseInt(date.format("M")));
+                const name = monthName(parseInt(date.format("M")));
+                setDay({ year: date.format("YYYY"), month: date.format("M"), monthName: name, result: [...dateArray] });
+            }
+        },
+        [day.month, day.year],
+    );
+
+    // 스티커 팝업창
+    const stickerPop = useCallback(
+        (e: React.MouseEvent<HTMLElement>) => {
+            setStick(!stick);
+        },
+        [stick],
+    );
 
     return (
         <Layout>
             <Container>
-				<button type="button" className="left" data-arrow="pre" onClick={changeMonth}></button>
+                <div className={classNames("sticker", { open: stick })}>
+                    <div className="stickerContainer">
+                        <p>스티커 관리</p>
+                        <button type="button" className="cancelBtn" onClick={stickerPop}>
+                            닫기
+                        </button>
+                        <div className="stickerBox">
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                            <img src={left} />
+                        </div>
+                        <div className="stickerButton">
+                            <input type="file" id="sticker" />
+                            <label htmlFor="sticker">추가하기</label>
+                            <button type="button">삭제하기</button>
+                            <button type="button">붙이기</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" className="left" data-arrow="pre" onClick={changeMonth}></button>
                 <div className="month">
-                    <p>{day.month}</p>
+                    <button type="button" onClick={stickerPop}>
+                        {day.month}
+                    </button>
                     <p>{day.monthName}</p>
                 </div>
                 <div className="calendar">
@@ -370,7 +535,7 @@ const main = memo(() => {
                         })}
                     </div>
                 </div>
-				<button type="button" className="right" data-arrow="next" onClick={changeMonth}></button>
+                <button type="button" className="right" data-arrow="next" onClick={changeMonth}></button>
             </Container>
         </Layout>
     );
