@@ -147,7 +147,7 @@ const Container = styled.div`
 	`}
 `;
 
-const main = memo((props: {children: React.ReactNode}) => {
+const layout = memo((props: {children: React.ReactNode}) => {
     const [logout, setLogout] = useState<boolean>(false);
     const navigate = useNavigate();
 
@@ -206,4 +206,4 @@ const main = memo((props: {children: React.ReactNode}) => {
     );
 });
 
-export default main;
+export default layout;

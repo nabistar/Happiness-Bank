@@ -9,7 +9,7 @@ import WriteLayout from "./writeLayout";
 // 이미지
 import text from "../assets/img/text.png";
 
-const write = memo(() => {
+const edit = memo(() => {
     return (
         <Layout>
             <WriteLayout>
@@ -25,7 +25,7 @@ const write = memo(() => {
                         <div className="text">
                             <textarea maxLength={5000} placeholder="내용을 작성해주세요. 최대 5000자까지 가능합니다."></textarea>
                             <div className="bank">
-                                <button type="submit">저금하기</button>
+                                <button type="submit">수정하기</button>
                             </div>
                         </div>
                     </form>
@@ -35,4 +35,4 @@ const write = memo(() => {
     );
 });
 
-export default write;
+export default edit;

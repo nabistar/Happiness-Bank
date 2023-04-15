@@ -1,9 +1,15 @@
 import React, { memo, useState, useCallback, FormEvent, InvalidEvent } from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 // 미디어쿼리
 import mq from "../MediaQuery";
+
+// 슬라이스
+import { addItem } from "../Slice/userSlice";
+
+// 커스텀 훅
+import {useAppDispatch, useAppSelector} from "../Hook";
 
 const Container = styled.div`
     display: flex;
@@ -39,15 +45,7 @@ const Container = styled.div`
                 input {
                     outline: none;
 
-                    &.invalid + p {
-                        display: block;
-                    }
-
-                    &.password ~ p.pass {
-                        display: block;
-                    }
-
-                    &.idcheck ~ p.id {
+                    &.invalid + p, &.password ~ p.pass, &.idcheck ~ p.id, &.notId ~ p.checkId {
                         display: block;
                     }
                 }
@@ -99,11 +97,14 @@ const Container = styled.div`
 `;
 
 const join = memo(() => {
+	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
+
     const formSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const current = e.currentTarget;
         const passCheck = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
-        const idCheck = /^[a-zA-z0-9]{4,20}$/;
+        const idCheck = /^[a-z]+[a-z0-9]{4,20}$/g;
 
         const name: string = current.nickname.value;
         const id: string = current.userid.value;
@@ -112,11 +113,30 @@ const join = memo(() => {
 
         if (!passCheck.test(password)) {
             current.password.classList.add("password");
+			return;
         }
 
         if (!idCheck.test(id)) {
             current.userid.classList.add("idcheck");
+			return;
         }
+
+		if (password !== passwordCheck) {
+			current.passwordCheck.classList.add("invalid");
+			return;
+		}
+
+		dispatch(addItem({name: name, userid: id, password: password})).then((result) => {
+			const value = result.payload;
+
+			if (value && !(value instanceof Error) && value.length > 0) {
+				current.userid.classList.add("notId");
+			} else {
+				window.alert("가입이 완료되었어요!");
+				navigate("/login");
+			}
+			
+		});
     }, []);
 
     const required = useCallback((e: InvalidEvent<HTMLInputElement>) => {
@@ -133,6 +153,7 @@ const join = memo(() => {
         e.target.classList.remove("invalid");
         e.target.classList.remove("password");
         e.target.classList.remove("idcheck");
+		e.target.classList.remove("notId");
     }, []);
 
     return (
@@ -149,17 +170,18 @@ const join = memo(() => {
                         <label htmlFor="id">아이디: </label>
                         <input type="text" id="id" name="userid" required onInvalid={required} onFocus={requiredRemove} />
                         <p className="error">아이디를 입력해주세요.</p>
-                        <p className="error id">아이디는 영문자, 숫자 조합으로 4~20자리까지 가능합니다.</p>
+                        <p className="error id">아이디는 영문자, 영문자 숫자 조합으로 4~20자리까지 가능합니다.</p>
+						<p className="error checkId">이미 존재하는 아이디입니다.</p>
                     </div>
                     <div className="input">
                         <label htmlFor="password">비밀번호: </label>
-                        <input type="text" id="password" name="password" required onInvalid={required} onFocus={requiredRemove} />
+                        <input type="password" id="password" name="password" required onInvalid={required} onFocus={requiredRemove} />
                         <p className="error">비밀번호를 입력해주세요.</p>
                         <p className="error pass">비밀번호는 영문자, 숫자, 특수문자 조합으로 8~25자리까지 가능합니다.</p>
                     </div>
                     <div className="input">
                         <label htmlFor="passwordCheck">비밀번호 확인: </label>
-                        <input type="text" id="passwordCheck" name="passwordCheck" required onInvalid={required} onFocus={requiredRemove} />
+                        <input type="password" id="passwordCheck" name="passwordCheck" required onInvalid={required} onFocus={requiredRemove} />
                         <p className="error">비밀번호를 확인해주세요.</p>
                     </div>
                     <div className="login">

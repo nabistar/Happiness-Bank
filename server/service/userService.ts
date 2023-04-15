@@ -1,6 +1,6 @@
 import mybatisMapper from "mybatis-mapper";
 import DBPool from "../helper/DBPool";
-import { RuntimeException } from "../helper/ExceptionHelper";
+import { RuntimeException, PageNotFoundException } from "../helper/ExceptionHelper";
 
 interface params {
 	userid: string;
@@ -42,7 +42,7 @@ class userService {
             let [result] = await dbcon.query(sql);
 
             if (result.length === 0) {
-                throw new RuntimeException("데이터를 조회할 수 없습니다.");
+                throw new PageNotFoundException("데이터를 조회할 수 없습니다.");
             }
 
             data = result[0];
@@ -58,35 +58,21 @@ class userService {
         return data;
     }
 
-	async addItem(params: params) {
+	async checkId(params: login) {
         let dbcon;
-        let data: data;
+        let data: data[];
 
         try {
             dbcon = await DBPool.getConnection();
+
             let sql = mybatisMapper.getStatement(
                 "userMapper",
-                "insertItem",
-                {userid: params.userid, password: params.password, name: params.name}
+                "selectId",
+                {userid: params.userid}
             );
-            let [{ insertId, affectedRows }] = await dbcon.query(sql);
-
-            if (affectedRows === 0) {
-                throw new RuntimeException("저장된 데이터가 없습니다.");
-            }
-
-            sql = mybatisMapper.getStatement("userMapper", "selectItem", {
-                id: insertId,
-            });
             let [result] = await dbcon.query(sql);
 
-            if (result.length === 0) {
-                throw new RuntimeException(
-                    "저장된 데이터를 조회할 수 없습니다."
-                );
-            }
-
-            data = result[0];
+            data = result;
 
         } catch (err) {
             throw err;
@@ -97,6 +83,31 @@ class userService {
         }
 
         return data;
+    }
+
+	async addItem(params: params) {
+        let dbcon;
+
+        try {
+            dbcon = await DBPool.getConnection();
+            let sql = mybatisMapper.getStatement(
+                "userMapper",
+                "insertItem",
+                {userid: params.userid, password: params.password, name: params.name}
+            );
+            let [{ affectedRows }] = await dbcon.query(sql);
+
+            if (affectedRows === 0) {
+                throw new RuntimeException("저장된 데이터가 없습니다.");
+            }
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (dbcon) {
+                dbcon.release();
+            }
+        }
     }
 
 	async deleteItem(id: string) {

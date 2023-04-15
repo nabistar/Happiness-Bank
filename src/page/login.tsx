@@ -1,9 +1,15 @@
 import React, { memo, useState, useCallback, FormEvent, InvalidEvent } from "react";
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 // 미디어쿼리
 import mq from "../MediaQuery";
+
+// 슬라이스
+import { logIn } from "../Slice/userSlice";
+
+// 커스텀 훅
+import {useAppDispatch, useAppSelector} from "../Hook";
 
 const Container = styled.div`
     display: flex;
@@ -86,12 +92,24 @@ const Container = styled.div`
 `;
 
 const login = memo(() => {
+	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 
-	const formSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
+	const formSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const current = e.currentTarget;
+		const id = current.userid.value;
+		const password = current.password.value;
+
+		dispatch(logIn({userid: id, password: password})).then((result) => {
+			if (!(result.payload instanceof Error) && result.payload?.rtcode === 200){
+				navigate("/main");
+			} else if (!(result.payload instanceof Error) && result.payload?.rtcode === 404) {
+				window.alert("존재하지 않는 사용자입니다.");
+			}
+		});
         
-    }, []);
+    };
 
 	const required = useCallback((e: InvalidEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -116,12 +134,12 @@ const login = memo(() => {
                     <p>로그인</p>
                     <div className="input">
                         <label htmlFor="id">아이디: </label>
-                        <input type="text" id="id" required onInvalid={required} onFocus={requiredRemove} />
+                        <input type="text" id="userid" required onInvalid={required} onFocus={requiredRemove} />
 						<p className="error">아이디를 입력해주세요.</p>
                     </div>
                     <div className="input">
                         <label htmlFor="password">비밀번호: </label>
-                        <input type="text" id="password" required onInvalid={required} onFocus={requiredRemove} />
+                        <input type="password" id="password" required onInvalid={required} onFocus={requiredRemove} />
 						<p className="error">비밀번호를 입력해주세요.</p>
                     </div>
                     <div className="join">

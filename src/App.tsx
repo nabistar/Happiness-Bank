@@ -7,6 +7,8 @@ import Join from './page/join';
 import Login from './page/login';
 import Main from './page/main';
 import Write from './page/write';
+import Edit from './page/edit';
+import View from './page/view';
 
 const App = memo(() => {
 	return (
@@ -16,6 +18,8 @@ const App = memo(() => {
 			<Route path="/login" element={<Login />} />
 			<Route path="/main" element={<Main />} />
 			<Route path="/write" element={<Write />} />
+			<Route path="/edit" element={<Edit />} />
+			<Route path="/view" element={<View />} />
 		</Routes>
 	);
 });

@@ -1,9 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 
+// 슬라이스
+import userSlice from './Slice/userSlice';
+
 
 const store = configureStore({
 	reducer: {
-		
+		userSlice: userSlice,
 	},
 });
 

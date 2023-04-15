@@ -23,8 +23,8 @@ const Container = styled.div`
     position: relative;
     padding: 10px 20px 30px;
     box-sizing: border-box;
-	background-color: #fff;
-	border-radius: 10px;
+    background-color: #fff;
+    border-radius: 10px;
 
     .sticker {
         width: 100%;
@@ -47,14 +47,14 @@ const Container = styled.div`
         .stickerContainer {
             width: 400px;
             height: 500px;
-            background-color: #3c5230;
+            background-color: #fff;
             padding: 20px;
             box-sizing: border-box;
-			position: relative;
-			border: 1px solid #000;
+            position: relative;
+            border: 1px solid #000;
 
             p {
-                color: #fde368;
+                color: #3c5230;
                 font-size: 25px;
                 text-align: center;
                 font-weight: 500;
@@ -80,10 +80,46 @@ const Container = styled.div`
                     background-color: #000;
                 }
 
-                img {
+                .stickerImg {
                     width: 50px;
                     height: 50px;
                     margin: 0 10px 20px 0;
+					position: relative;
+
+					&:nth-of-type(6n) {
+						margin-right: 0;
+					}
+
+					img {
+						width: 100%;
+						height: 100%;
+					}
+
+					.stickDel {
+						width: 100%;
+						height: 100%;
+						position: absolute;
+						left: 0;
+						top: 0;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						background-color: rgba(255, 255, 255, 0.5);
+						display: none;
+
+						&.delOpen {
+							display: flex;
+						}
+
+						button {
+							font-size: 14px;
+							width: 30px;
+							height: 20px;
+							background-color: #3c5230;
+							color: #fde368;
+							font-weight: 300;
+						}
+					}
                 }
             }
 
@@ -101,7 +137,7 @@ const Container = styled.div`
             label,
             button {
                 font-size: 20px;
-                color: #fde368;
+                color: #3c5230;
                 font-weight: 500;
                 padding: 0;
                 border: none;
@@ -112,13 +148,13 @@ const Container = styled.div`
                     cursor: pointer;
                 }
 
-				&.cancelBtn {
-					position: absolute;
-					right: 3px;
-					top: 0;
-					font-size: 15px;
-					font-weight: 300;
-				}
+                &.cancelBtn {
+                    position: absolute;
+                    right: 3px;
+                    top: 0;
+                    font-size: 15px;
+                    font-weight: 300;
+                }
             }
         }
     }
@@ -128,21 +164,31 @@ const Container = styled.div`
         display: flex;
         align-items: baseline;
         flex-wrap: wrap;
+		position: relative;
 
         p {
             color: #3c5230;
             font-size: 20px;
+
+            &:first-child {
+                font-size: 130px;
+                font-weight: 500;
+                margin: 0 5px 0 0;
+            }
         }
 
         button {
-            font-size: 130px;
+            font-size: 50px;
             font-weight: 500;
-            margin: 0 5px 0 0;
             color: #3c5230;
             background-color: transparent;
             border: none;
             outline: none;
             padding: 0;
+			position: absolute;
+			bottom: 0;
+			left: 10%;
+			height: 30px;
 
             &:hover {
                 cursor: pointer;
@@ -233,16 +279,14 @@ const Container = styled.div`
 		.month {
 			p {
 				font-size: 16px;
+
+				&:first-child {
+					font-size: 80px;
+				}
 			}
 
 			button {
-				font-size: 80px;
-			}
-
-			.sticker {
-				.stickerBox {
-					height: 300px;
-				}
+				font-size: 30px;
 			}
 		}
 
@@ -278,12 +322,9 @@ const Container = styled.div`
 			width: 100%;
 			margin-bottom: 50px;
 
-			.sticker {
-				width: 100%;
-				.stickerBox {
-					height: 150px;
-				}
-
+			button {
+				left: auto;
+				right: 0;
 			}
 		}
 
@@ -317,14 +358,6 @@ const Container = styled.div`
 	`}
 
 	${mq.maxWidth("sm")`
-
-		.month {
-			.sticker {
-				.stickerBox {
-					height: 200px;
-				}
-			}
-		}
 
 		.calendar {
 		.week {
@@ -375,6 +408,7 @@ const Container = styled.div`
 const main = memo(() => {
     const [day, setDay] = useState({ year: dayjs().format("YYYY"), month: dayjs().format("M"), monthName: "", result: [0] });
     const [stick, setStick] = useState<boolean>(false);
+	const [stickDel, setStickDel] = useState<boolean>(false);
 
     // 첫 렌더링 때 달력 그리기
     useEffect(() => {
@@ -467,8 +501,17 @@ const main = memo(() => {
     const stickerPop = useCallback(
         (e: React.MouseEvent<HTMLElement>) => {
             setStick(!stick);
+			setStickDel(false);
         },
         [stick],
+    );
+
+	// 스티커 삭제창
+	const stickerDel = useCallback(
+        (e: React.MouseEvent<HTMLElement>) => {
+            setStickDel(!stickDel);
+        },
+        [stickDel],
     );
 
     return (
@@ -481,37 +524,27 @@ const main = memo(() => {
                             닫기
                         </button>
                         <div className="stickerBox">
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
-                            <img src={left} />
+                            <div className="stickerImg">
+								<img src={left} />
+								<div className={classNames("stickDel", {delOpen: stickDel})}>
+									<button type="button">삭제</button>
+								</div>
+							</div>
                         </div>
                         <div className="stickerButton">
                             <input type="file" id="sticker" />
                             <label htmlFor="sticker">추가하기</label>
-                            <button type="button">삭제하기</button>
-                            <button type="button">붙이기</button>
+                            <button type="button" onClick={stickerDel}>{stickDel ? "그만두기" : "삭제하기"}</button>
                         </div>
                     </div>
                 </div>
                 <button type="button" className="left" data-arrow="pre" onClick={changeMonth}></button>
                 <div className="month">
-                    <button type="button" onClick={stickerPop}>
-                        {day.month}
-                    </button>
+                    <p>{day.month}</p>
                     <p>{day.monthName}</p>
+                    <button type="button" onClick={stickerPop}>
+                        …
+                    </button>
                 </div>
                 <div className="calendar">
                     <div className="week">

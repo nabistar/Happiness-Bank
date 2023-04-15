@@ -40,7 +40,7 @@ router.get(`${url}/logincheck`, async (req, res: custom, next) => {
 
 });
 
-router.get(`${url}/loginout`, async (req, res: custom, next) => {
+router.get(`${url}/logout`, async (req, res: custom, next) => {
 
     try {
         if(req.session.login) {
@@ -67,7 +67,10 @@ router.post(`${url}/login`, async (req, res: custom, next) => {
 			userid: userid,
 			password: password
 		});
-		req.session.login = json;
+
+		if (req.session.login) {
+			json = req.session.login;
+		}
     } catch (err) {
         return next(err);
     }
@@ -79,7 +82,7 @@ router.post(`${url}/login`, async (req, res: custom, next) => {
 
 router.post(url, async (req, res: custom, next) => {
     const { userid, password, name } = req.body;
-    let json: data;
+    let json = [];
 
     try {
         regexHelper.value(userid, "아이디가 없습니다.");
@@ -95,14 +98,19 @@ router.post(url, async (req, res: custom, next) => {
             password: password,
 			name: name
         };
+		json = await userService.checkId(params);
+		console.log(json);
 
-        json = await userService.addItem(params);
+        if (json.length === 0) {
+			await userService.addItem(params);
+		}
+		
     } catch (err) {
         return next(err);
     }
 
     if (res.sendResult) {
-        res.sendResult({ data: json });
+        res.sendResult({data: json});
     }
 });
 
