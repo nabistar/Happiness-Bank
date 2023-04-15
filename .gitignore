@@ -32,6 +32,3 @@ _files
 .env.*
 dist
 DB
-.gitignore
-*.json
-yarn.lock
