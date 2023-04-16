@@ -12,15 +12,14 @@ interface initialState {
     error: unknown;
 }
 
-export const getList = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/getList", async (payload, { rejectWithValue }) => {
+export const getList = createAsyncThunk<info, info, { rejectValue: Error }>("stickerSlice/getList", async (payload, { rejectWithValue }) => {
     let result: info = {};
 
     try {
         if (payload) {
-            const response = await axios.get("/daily", {
+            const response = await axios.get("/sticker", {
                 params: {
-                    userid: payload.userid,
-                    month: payload.month,
+                    user_id: payload.user_id
                 },
             });
             result = response.data.data;
@@ -34,11 +33,11 @@ export const getList = createAsyncThunk<info, info, { rejectValue: Error }>("dai
     return result;
 });
 
-export const getItem = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/getItem", async (payload, { rejectWithValue }) => {
+export const addItem = createAsyncThunk<info, info, { rejectValue: Error }>("stickerSlice/addItem", async (payload, { rejectWithValue }) => {
     let result: info = {};
 
     try {
-        const response = await axios.get(`/daily/${payload.id}`);
+        const response = await axios.post("/sticker", payload);
         result = response.data.data;
     } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -49,26 +48,11 @@ export const getItem = createAsyncThunk<info, info, { rejectValue: Error }>("dai
     return result;
 });
 
-export const addItem = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/addItem", async (payload, { rejectWithValue }) => {
+export const addImg = createAsyncThunk<info, FormData, { rejectValue: Error }>("stickerSlice/addImg", async (payload, { rejectWithValue }) => {
     let result: info = {};
 
     try {
-        const response = await axios.post("/daily", payload);
-        result = response.data;
-    } catch (err) {
-        if (axios.isAxiosError(err)) {
-            return rejectWithValue(err.response?.data);
-        }
-    }
-
-    return result;
-});
-
-export const addImg = createAsyncThunk<info[], info, { rejectValue: Error }>("dailySlice/addImg", async (payload, { rejectWithValue }) => {
-    let result = [];
-
-    try {
-        const response = await axios.post("/dailyimg", payload, {
+        const response = await axios.post("/stickerimg", payload, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -83,11 +67,11 @@ export const addImg = createAsyncThunk<info[], info, { rejectValue: Error }>("da
     return result;
 });
 
-export const deleteItem = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/deleteItem", async (payload, { rejectWithValue }) => {
+export const deleteItem = createAsyncThunk<info, info, { rejectValue: Error }>("stickerSlice/deleteItem", async (payload, { rejectWithValue }) => {
     let result: info = {};
 
     try {
-        const response = await axios.delete(`/daily${payload.id}`);
+        const response = await axios.delete(`/sticker/${payload.id}`);
         result = response.data.data;
     } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -98,8 +82,8 @@ export const deleteItem = createAsyncThunk<info, info, { rejectValue: Error }>("
     return result;
 });
 
-const dailySlice = createSlice({
-    name: "dailySlice",
+const stickerSlice = createSlice({
+    name: "stickerSlice",
     initialState: {
         data: null,
         loading: false,
@@ -116,17 +100,6 @@ const dailySlice = createSlice({
                 state.data = payload;
             })
             .addCase(getList.rejected, (state, { payload }) => {
-                state.loading = false;
-                state.error = payload;
-            })
-            .addCase(getItem.pending, (state, { payload }) => {
-                state.loading = true;
-            })
-            .addCase(getItem.fulfilled, (state, { payload }) => {
-                state.loading = false;
-                state.data = payload;
-            })
-            .addCase(getItem.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             })
@@ -167,4 +140,4 @@ const dailySlice = createSlice({
     },
 });
 
-export default dailySlice.reducer;
+export default stickerSlice.reducer;

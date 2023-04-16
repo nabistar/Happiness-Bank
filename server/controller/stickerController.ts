@@ -8,10 +8,6 @@ interface custom extends Response {
     sendError?: Function;
 }
 
-interface customReq extends Request {
-	file?: Object;
-}
-
 interface data {
     id: number;
     sticker_path: string;
@@ -64,8 +60,8 @@ router.post(url, async (req, res: custom, next) => {
     }
 });
 
-router.post(`${url}img`, (req: customReq, res: custom, next) => {
-    const upload = fileHelper.initMulter().single("sticker");
+router.post(`${url}img`, (req, res: custom, next) => {
+    const upload = fileHelper.initMulter().any("happy");
 
     upload(req, res, async (err: Error) => {
         try {

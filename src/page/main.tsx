@@ -10,6 +10,12 @@ import Layout from "./layout";
 // 미디어쿼리
 import mq from "../MediaQuery";
 
+// 슬라이스
+import { addImg, addItem, getList, deleteItem } from "../Slice/stickerSlice";
+
+// 커스텀 훅
+import { useAppDispatch, useAppSelector } from "../Hook";
+
 // 이미지
 import left from "../assets/img/left.png";
 import right from "../assets/img/right.png";
@@ -84,42 +90,42 @@ const Container = styled.div`
                     width: 50px;
                     height: 50px;
                     margin: 0 10px 20px 0;
-					position: relative;
+                    position: relative;
 
-					&:nth-of-type(6n) {
-						margin-right: 0;
-					}
+                    &:nth-of-type(6n) {
+                        margin-right: 0;
+                    }
 
-					img {
-						width: 100%;
-						height: 100%;
-					}
+                    img {
+                        width: 100%;
+                        height: 100%;
+                    }
 
-					.stickDel {
-						width: 100%;
-						height: 100%;
-						position: absolute;
-						left: 0;
-						top: 0;
-						display: flex;
-						align-items: center;
-						justify-content: center;
-						background-color: rgba(255, 255, 255, 0.5);
-						display: none;
+                    .stickDel {
+                        width: 100%;
+                        height: 100%;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: rgba(255, 255, 255, 0.5);
+                        display: none;
 
-						&.delOpen {
-							display: flex;
-						}
+                        &.delOpen {
+                            display: flex;
+                        }
 
-						button {
-							font-size: 14px;
-							width: 30px;
-							height: 20px;
-							background-color: #3c5230;
-							color: #fde368;
-							font-weight: 300;
-						}
-					}
+                        button {
+                            font-size: 14px;
+                            width: 30px;
+                            height: 20px;
+                            background-color: #3c5230;
+                            color: #fde368;
+                            font-weight: 300;
+                        }
+                    }
                 }
             }
 
@@ -164,7 +170,7 @@ const Container = styled.div`
         display: flex;
         align-items: baseline;
         flex-wrap: wrap;
-		position: relative;
+        position: relative;
 
         p {
             color: #3c5230;
@@ -185,10 +191,10 @@ const Container = styled.div`
             border: none;
             outline: none;
             padding: 0;
-			position: absolute;
-			bottom: 0;
-			left: 10%;
-			height: 30px;
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            height: 30px;
 
             &:hover {
                 cursor: pointer;
@@ -408,7 +414,11 @@ const Container = styled.div`
 const main = memo(() => {
     const [day, setDay] = useState({ year: dayjs().format("YYYY"), month: dayjs().format("M"), monthName: "", result: [0] });
     const [stick, setStick] = useState<boolean>(false);
-	const [stickDel, setStickDel] = useState<boolean>(false);
+    const [stickDel, setStickDel] = useState<boolean>(false);
+
+    const dispatch = useAppDispatch();
+    const { data: fileData } = useAppSelector((state) => state.stickerSlice);
+    const { data: user } = useAppSelector((state) => state.userSlice);
 
     // 첫 렌더링 때 달력 그리기
     useEffect(() => {
@@ -417,6 +427,13 @@ const main = memo(() => {
 
         setDay({ ...day, monthName: name, result: [...value] });
     }, []);
+
+	// 스티커 목록 가져오기
+	useEffect(() => {
+        if (user && user !== true && !Array.isArray(user)) {
+            dispatch(getList({ user_id: user.id }));
+        }
+    }, [user && user !== true && !Array.isArray(user) && user.id, fileData && fileData.length]);
 
     // 달력 그리기
     const calendar = useCallback((year: number, month: number) => {
@@ -501,18 +518,44 @@ const main = memo(() => {
     const stickerPop = useCallback(
         (e: React.MouseEvent<HTMLElement>) => {
             setStick(!stick);
-			setStickDel(false);
+            setStickDel(false);
         },
         [stick],
     );
 
-	// 스티커 삭제창
-	const stickerDel = useCallback(
+    // 스티커 삭제창
+    const stickerDel = useCallback(
         (e: React.MouseEvent<HTMLElement>) => {
             setStickDel(!stickDel);
         },
         [stickDel],
     );
+
+    // 스티커 추가
+    const stickerAdd = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.currentTarget.files;
+        const formData = new FormData();
+
+        if (file) {
+            formData.append("happy", file[0]);
+            dispatch(addImg(formData)).then((result) => {
+                if (user && user !== true && !Array.isArray(user) && result.payload && !(result.payload instanceof Error)) {
+                    dispatch(addItem({ user_id: user.id, sticker_path: result.payload.url }));
+                }
+            });
+        }
+    }, [user]);
+
+	const sticekrDelete = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+		if (!(e.target instanceof HTMLButtonElement)) {
+			return;
+		}
+		
+		const id = e.target.dataset.id;
+		if (typeof id === 'string') {
+			dispatch(deleteItem({id: id}));
+		}
+	}, []);
 
     return (
         <Layout>
@@ -524,17 +567,27 @@ const main = memo(() => {
                             닫기
                         </button>
                         <div className="stickerBox">
-                            <div className="stickerImg">
-								<img src={left} />
-								<div className={classNames("stickDel", {delOpen: stickDel})}>
-									<button type="button">삭제</button>
-								</div>
-							</div>
+                            {Array.isArray(fileData) &&
+                                fileData.map((v, i) => {
+									if (typeof v.sticker_path === "string") {
+										return (
+											<div className="stickerImg" key={i}>
+												<img src={v.sticker_path} />
+												<div className={classNames("stickDel", { delOpen: stickDel })}>
+													<button type="button" data-id={v.id} onClick={sticekrDelete}>삭제</button>
+												</div>
+											</div>
+										);
+									}
+                                    
+                                })}
                         </div>
                         <div className="stickerButton">
-                            <input type="file" id="sticker" />
+                            <input type="file" id="sticker" name="happy" onChange={stickerAdd} />
                             <label htmlFor="sticker">추가하기</label>
-                            <button type="button" onClick={stickerDel}>{stickDel ? "그만두기" : "삭제하기"}</button>
+                            <button type="button" onClick={stickerDel}>
+                                {stickDel ? "그만두기" : "삭제하기"}
+                            </button>
                         </div>
                     </div>
                 </div>

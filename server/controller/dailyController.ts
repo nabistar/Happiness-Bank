@@ -15,10 +15,6 @@ interface imgPath {
     [key: string]: string;
 }
 
-interface customReq extends Request {
-	file?: Object;
-}
-
 interface data {
 	id: number;
 	date: string;
@@ -119,7 +115,7 @@ router.post(url, async (req, res: custom, next) => {
     }
 });
 
-router.post(`${url}img`, (req: customReq, res: custom, next) => {
+router.post(`${url}img`, (req, res: custom, next) => {
     const upload = fileHelper.initMulter().single("happy");
 
     upload(req, res, async (err: Error) => {

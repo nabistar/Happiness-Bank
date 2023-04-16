@@ -117,6 +117,7 @@ class FileHelper {
 						err.message = "업로드 가능한 파일 용량을 초과했습니다.";
 						break;
 					default:
+						console.log(err);
 						err.code = 500;
 						err.message = "알 수 없는 에러가 발생했습니다.";
 						break;
