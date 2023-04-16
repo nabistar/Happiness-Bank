@@ -9,68 +9,61 @@ interface custom extends Response {
 }
 
 interface data {
-	id: number;
-	name: string;
+    id: number;
+    name: string;
 }
 
 declare module "express-session" {
-	interface SessionData {
-		login?: data;
-	}
+    interface SessionData {
+        login?: data;
+    }
 }
 
 const url: string = "/user";
 const router = express.Router();
 
 router.get(`${url}/logincheck`, async (req, res: custom, next) => {
-
     try {
-        if(req.session.login) {
-			if (res.sendResult) {
-				res.sendResult({ data: true});
-			}
-		} else {
-			if (res.sendResult) {
-				res.sendResult({ data: false});
-			}
-		}
+        if (req.session.login) {
+            if (res.sendResult) {
+                res.sendResult({ data: req.session.login });
+            }
+        } else {
+            if (res.sendResult) {
+                res.sendResult({ data: false });
+            }
+        }
     } catch (err) {
         return next(err);
     }
-
 });
 
 router.get(`${url}/logout`, async (req, res: custom, next) => {
-
     try {
-        if(req.session.login) {
-			req.session.destroy((err) => {
-				if(err) {
-					return next(err);
-				}
-			});
-		}
+        if (req.session.login) {
+            req.session.destroy((err) => {
+                if (err) {
+                    return next(err);
+                }
+            });
+        }
     } catch (err) {
         return next(err);
     }
-
 });
 
 router.post(`${url}/login`, async (req, res: custom, next) => {
-
-	const {userid, password} = req.body;
+    const { userid, password } = req.body;
 
     let json: data;
 
     try {
         json = await userService.getItem({
-			userid: userid,
-			password: password
-		});
+            userid: userid,
+            password: password,
+        });
 
-		if (req.session.login) {
-			json = req.session.login;
-		}
+        req.session.login = json;
     } catch (err) {
         return next(err);
     }
@@ -87,7 +80,7 @@ router.post(url, async (req, res: custom, next) => {
     try {
         regexHelper.value(userid, "아이디가 없습니다.");
         regexHelper.value(password, "비밀번호가 없습니다.");
-		regexHelper.value(name, "이름이 없습니다.");
+        regexHelper.value(name, "이름이 없습니다.");
     } catch (err) {
         return next(err);
     }
@@ -96,21 +89,20 @@ router.post(url, async (req, res: custom, next) => {
         const params = {
             userid: userid,
             password: password,
-			name: name
+            name: name,
         };
-		json = await userService.checkId(params);
-		console.log(json);
+        json = await userService.checkId(params);
+        console.log(json);
 
         if (json.length === 0) {
-			await userService.addItem(params);
-		}
-		
+            await userService.addItem(params);
+        }
     } catch (err) {
         return next(err);
     }
 
     if (res.sendResult) {
-        res.sendResult({data: json});
+        res.sendResult({ data: json });
     }
 });
 

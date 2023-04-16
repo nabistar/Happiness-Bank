@@ -7,16 +7,38 @@ interface info {
 
 interface initialState {
     data: info | info[] | boolean | null;
-	check: boolean;
+    check: boolean;
     loading: boolean;
     error: unknown;
 }
 
-export const loginCheck = createAsyncThunk<boolean | info, null, {rejectValue: Error}>("userSlice/loginCheck", async (payload, { rejectWithValue }) => {
-    let result: boolean | info = false;
+export const getList = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/getList", async (payload, { rejectWithValue }) => {
+    let result: info = {};
 
     try {
-        const response = await axios.get("/user/logincheck");
+        if (payload) {
+            const response = await axios.get("/daily", {
+                params: {
+                    userid: payload.userid,
+                    month: payload.month,
+                },
+            });
+            result = response.data.data;
+        }
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+        }
+    }
+
+    return result;
+});
+
+export const getItem = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/getItem", async (payload, { rejectWithValue }) => {
+    let result: info = {};
+
+    try {
+        const response = await axios.get(`/daily/${payload.id}`);
         result = response.data.data;
     } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -27,26 +49,11 @@ export const loginCheck = createAsyncThunk<boolean | info, null, {rejectValue: E
     return result;
 });
 
-export const logOut = createAsyncThunk<info, null, {rejectValue: Error}>("userSlice/logOut", async (payload, { rejectWithValue }) => {
+export const addItem = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/addItem", async (payload, { rejectWithValue }) => {
     let result: info = {};
 
     try {
-        const response = await axios.get("/user/logout");
-        result = response.data.data;
-    } catch (err) {
-        if (axios.isAxiosError(err)) {
-            return rejectWithValue(err.response?.data);
-        }
-    }
-
-    return result;
-});
-
-export const logIn = createAsyncThunk<info, info, {rejectValue: Error}>("userSlice/logIn", async (payload, { rejectWithValue }) => {
-    let result: info = {};
-
-    try {
-        const response = await axios.post("/user/login", payload);
+        const response = await axios.post("/daily", payload);
         result = response.data;
     } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -57,11 +64,15 @@ export const logIn = createAsyncThunk<info, info, {rejectValue: Error}>("userSli
     return result;
 });
 
-export const addItem = createAsyncThunk<info[], info, {rejectValue: Error}>("userSlice/addItem", async (payload, { rejectWithValue }) => {
+export const addImg = createAsyncThunk<info[], info, { rejectValue: Error }>("dailySlice/addImg", async (payload, { rejectWithValue }) => {
     let result = [];
 
     try {
-        const response = await axios.post("/user", payload);
+        const response = await axios.post("/dailyimg", payload, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
         result = response.data.data;
     } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -72,11 +83,11 @@ export const addItem = createAsyncThunk<info[], info, {rejectValue: Error}>("use
     return result;
 });
 
-export const deleteItem = createAsyncThunk<info, info, {rejectValue: Error}>("userSlice/deleteItem", async (payload, { rejectWithValue }) => {
+export const deleteItem = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/deleteItem", async (payload, { rejectWithValue }) => {
     let result: info = {};
 
     try {
-        const response = await axios.delete(`/user${payload.id}`);
+        const response = await axios.delete(`/daily${payload.id}`);
         result = response.data.data;
     } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -87,8 +98,8 @@ export const deleteItem = createAsyncThunk<info, info, {rejectValue: Error}>("us
     return result;
 });
 
-const userSlice = createSlice({
-    name: "userSlice",
+const dailySlice = createSlice({
+    name: "dailySlice",
     initialState: {
         data: null,
         loading: false,
@@ -97,48 +108,48 @@ const userSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(loginCheck.pending, (state, { payload }) => {
+            .addCase(getList.pending, (state, { payload }) => {
                 state.loading = true;
             })
-            .addCase(loginCheck.fulfilled, (state, { payload }) => {
+            .addCase(getList.fulfilled, (state, { payload }) => {
                 state.loading = false;
                 state.data = payload;
             })
-            .addCase(loginCheck.rejected, (state, { payload }) => {
+            .addCase(getList.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             })
-            .addCase(logOut.pending, (state, { payload }) => {
+            .addCase(getItem.pending, (state, { payload }) => {
                 state.loading = true;
             })
-            .addCase(logOut.fulfilled, (state, { payload }) => {
+            .addCase(getItem.fulfilled, (state, { payload }) => {
                 state.loading = false;
                 state.data = payload;
             })
-            .addCase(logOut.rejected, (state, { payload }) => {
-                state.loading = false;
-                state.error = payload;
-            })
-            .addCase(logIn.pending, (state, { payload }) => {
-                state.loading = true;
-				state.error = null;
-            })
-            .addCase(logIn.fulfilled, (state, { payload }) => {
-                state.loading = false;
-                state.data = payload;
-            })
-            .addCase(logIn.rejected, (state, { payload }) => {
+            .addCase(getItem.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             })
             .addCase(addItem.pending, (state, { payload }) => {
                 state.loading = true;
+                state.error = null;
             })
             .addCase(addItem.fulfilled, (state, { payload }) => {
                 state.loading = false;
                 state.data = payload;
             })
             .addCase(addItem.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+            })
+            .addCase(addImg.pending, (state, { payload }) => {
+                state.loading = true;
+            })
+            .addCase(addImg.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.data = payload;
+            })
+            .addCase(addImg.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             })
@@ -156,4 +167,4 @@ const userSlice = createSlice({
     },
 });
 
-export default userSlice.reducer;
+export default dailySlice.reducer;

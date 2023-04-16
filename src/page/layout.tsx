@@ -1,10 +1,16 @@
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useState, useCallback, useEffect } from "react";
 import styled from "styled-components";
 import { NavLink, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 
 // 미디어쿼리
 import mq from "../MediaQuery";
+
+// 슬라이스
+import { loginCheck, logOut } from "../Slice/userSlice";
+
+// 커스텀 훅
+import { useAppDispatch, useAppSelector } from "../Hook";
 
 // 이미지
 import logo from "../assets/img/logo.png";
@@ -25,7 +31,7 @@ const Container = styled.div`
         align-items: center;
         justify-content: center;
         display: none;
-		z-index: 1;
+        z-index: 1;
 
         &.pop {
             display: flex;
@@ -95,9 +101,9 @@ const Container = styled.div`
                 font-size: 20px;
                 color: #fde368;
 
-				&:hover {
-					cursor: pointer;
-				}
+                &:hover {
+                    cursor: pointer;
+                }
             }
         }
 
@@ -147,9 +153,21 @@ const Container = styled.div`
 	`}
 `;
 
-const layout = memo((props: {children: React.ReactNode}) => {
+const layout = memo((props: { children: React.ReactNode }) => {
     const [logout, setLogout] = useState<boolean>(false);
+	const {data} = useAppSelector((state) => state.userSlice);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
+    // 로그인 체크
+    useEffect(() => {
+        dispatch(loginCheck(null)).then((result) => {
+            if (!(result.payload instanceof Error) && result.payload === false) {
+                window.alert("로그인 후 이용할 수 있는 페이지입니다.");
+                navigate("/login");
+            }
+        });
+    }, []);
 
     // 로그아웃 팝업
     const logoutPop = useCallback(() => {
@@ -165,8 +183,9 @@ const layout = memo((props: {children: React.ReactNode}) => {
 
     // 로그아웃 후 메인으로
     const logoutAct = useCallback(() => {
-        document.body.style.overflow = "unset";
+        dispatch(logOut(null));
         setLogout(false);
+        document.body.style.overflow = "unset";
         navigate("/");
     }, []);
 
@@ -196,11 +215,9 @@ const layout = memo((props: {children: React.ReactNode}) => {
                 </div>
                 <div className="title">
                     <img src={logo} alt="logo" />
-                    <p>OOO님, 안녕하세요!</p>
+                    {data && !(Array.isArray(data)) && data !== true && (<p>{data.name}님, 안녕하세요!</p>)}
                 </div>
-                <div className="content">
-                    {props.children}
-                </div>
+                <div className="content">{props.children}</div>
             </div>
         </Container>
     );
