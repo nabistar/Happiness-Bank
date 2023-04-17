@@ -163,7 +163,7 @@ class dailyService {
             let sql = mybatisMapper.getStatement(
                 "dailyMapper",
                 "updateSticker",
-                {sticker_id: params.sticker_id}
+                {id: params.id, sticker_id: params.sticker_id}
             );
             let [{ affectedRows }] = await dbcon.query(sql);
 

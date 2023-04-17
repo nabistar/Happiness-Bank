@@ -177,6 +177,28 @@ router.put(`${url}/:id`, async (req, res: custom, next) => {
     }
 });
 
+router.put(`${url}/sticker/:id`, async (req, res: custom, next) => {
+    const { id } = req.params;
+	const {sticker_id} = req.body;
+
+	try {
+        regexHelper.value(sticker_id, "스티커가 없습니다.");
+    } catch (err) {
+        return next(err);
+    }
+
+    try {
+		await dailyService.editSticker({id: id, sticker_id: sticker_id});
+        
+    } catch (err) {
+        return next(err);
+    }
+
+    if (res.sendResult) {
+        res.sendResult();
+    }
+});
+
 router.delete(`${url}/:id`, async (req, res: custom, next) => {
     const { id } = req.params;
 

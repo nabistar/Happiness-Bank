@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback, useEffect } from "react";
+import React, { memo, useState, useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { NavLink, useNavigate } from "react-router-dom";
 import classNames from "classnames";
@@ -12,7 +12,7 @@ import mq from "../MediaQuery";
 
 // 슬라이스
 import { addImg, addItem, getList, deleteItem } from "../Slice/stickerSlice";
-import { getDaily } from "../Slice/dailySlice";
+import { getDaily, putSticker } from "../Slice/dailySlice";
 
 // 커스텀 훅
 import { useAppDispatch, useAppSelector } from "../Hook";
@@ -68,11 +68,28 @@ const Container = styled.div`
                 font-weight: 500;
             }
 
+            .stickerDate {
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                height: auto;
+                margin-top: 30px;
+                p {
+                    font-size: 14px;
+                    color: #000;
+                }
+
+                select {
+                    outline: none;
+                    border: none;
+                }
+            }
+
             .stickerBox {
                 display: flex;
                 flex-wrap: wrap;
                 width: 100%;
-                height: 350px;
+                height: 300px;
                 margin: 30px 0;
                 overflow-y: auto;
 
@@ -98,9 +115,22 @@ const Container = styled.div`
                         margin-right: 0;
                     }
 
-                    img {
+                    button {
+                        display: block;
                         width: 100%;
                         height: 100%;
+                        border: none;
+                        background-color: transparent;
+                        outline: none;
+
+                        &:hover {
+                            cursor: pointer;
+                        }
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                        }
                     }
 
                     .stickDel {
@@ -255,19 +285,19 @@ const Container = styled.div`
                         color: #3c5230;
                     }
 
-					a {
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						width: 100%;
-						height: 80%;
+                    a {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        width: 100%;
+                        height: 80%;
 
-						img {
-							display: block;
-							width: 50px;
-							height: 50px;
-						}
-					}
+                        img {
+                            display: block;
+                            width: 50px;
+                            height: 50px;
+                        }
+                    }
                 }
             }
         }
@@ -447,6 +477,7 @@ const main = memo(() => {
     const [day, setDay] = useState({ year: dayjs().format("YYYY"), month: dayjs().format("M"), monthName: "", result: [0] });
     const [stick, setStick] = useState<boolean>(false);
     const [stickDel, setStickDel] = useState<boolean>(false);
+    const stickerDate = useRef<HTMLSelectElement>(null);
 
     const dispatch = useAppDispatch();
     const { data: fileData } = useAppSelector((state) => state.stickerSlice);
@@ -473,7 +504,7 @@ const main = memo(() => {
         if (user && user !== true && !Array.isArray(user)) {
             dispatch(getDaily({ user_id: user.id, month: day.month }));
         }
-    }, [user && user !== true && !Array.isArray(user) && user.id, day.month]);
+    }, [user && user !== true && !Array.isArray(user) && user.id, day.month, stick]);
 
     // 달력 그리기
     const calendar = useCallback((year: number, month: number) => {
@@ -589,7 +620,7 @@ const main = memo(() => {
         [user && user !== true && !Array.isArray(user) && user.id],
     );
 
-	// 스티커 삭제
+    // 스티커 삭제
     const sticekrDelete = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
         if (!(e.target instanceof HTMLButtonElement)) {
             return;
@@ -601,6 +632,23 @@ const main = memo(() => {
         }
     }, []);
 
+    // 스티커 붙이기
+    const stickerStick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+        if (!(e.currentTarget instanceof HTMLButtonElement)) {
+            return;
+        }
+
+        if (stickerDate.current && e.currentTarget.dataset.id) {
+            const stickerId = e.currentTarget.dataset.id;
+            const dailyId = stickerDate.current.value;
+
+			if(window.confirm("스티커를 붙일까요?")) {
+				dispatch(putSticker({id: dailyId, sticker_id: stickerId}));
+				setStick(false);
+			}
+        }
+    }, [daily, fileData]);
+
     return (
         <Layout>
             <Container>
@@ -610,13 +658,28 @@ const main = memo(() => {
                         <button type="button" className="cancelBtn" onClick={stickerPop}>
                             닫기
                         </button>
+                        <div className="stickerDate">
+                            <p>어느 날짜에 붙일까요?</p>
+                            <select ref={stickerDate}>
+                                {Array.isArray(daily) &&
+                                    daily.map((v, i) => {
+                                        return (
+                                            <option key={i} value={v.id}>
+                                                {dayjs(v.date).format("YYYY-MM-DD")}
+                                            </option>
+                                        );
+                                    })}
+                            </select>
+                        </div>
                         <div className="stickerBox">
                             {Array.isArray(fileData) &&
                                 fileData.map((v, i) => {
                                     if (typeof v.sticker_path === "string") {
                                         return (
                                             <div className="stickerImg" key={i}>
-                                                <img src={v.sticker_path} />
+                                                <button type="button" data-id={v.id} onClick={stickerStick}>
+                                                    <img src={v.sticker_path} />
+                                                </button>
                                                 <div className={classNames("stickDel", { delOpen: stickDel })}>
                                                     <button type="button" data-id={v.id} onClick={sticekrDelete}>
                                                         삭제
@@ -659,25 +722,25 @@ const main = memo(() => {
                             let dailyArray: JSX.Element[] = [];
                             const today = dayjs(`${day.year}-${day.month}-${v}`).format("YYYY-MM-DD");
 
-							if ( v === 0) {
-								dailyArray[i] = (
-									<div className="dayBox" key={i}>
-										<div>
-											<p></p>
-										</div>
-									</div>
-								);
-							} else {
-								dailyArray[i] = (
-									<div className="dayBox" key={i}>
-										<div>
-											<p>{v}</p>
-											<NavLink to={`/write/${today}`}></NavLink>
-										</div>
-									</div>
-								);
-							}
-                            
+                            if (v === 0) {
+                                dailyArray[i] = (
+                                    <div className="dayBox" key={i}>
+                                        <div>
+                                            <p></p>
+                                        </div>
+                                    </div>
+                                );
+                            } else {
+                                dailyArray[i] = (
+                                    <div className="dayBox" key={i}>
+                                        <div>
+                                            <p>{v}</p>
+                                            <NavLink to={`/write/${today}`}></NavLink>
+                                        </div>
+                                    </div>
+                                );
+                            }
+
                             Array.isArray(daily) &&
                                 daily.forEach((k, j) => {
                                     const dailyDay = dayjs(k.date).format("YYYY-MM-DD");
@@ -694,7 +757,7 @@ const main = memo(() => {
                                             </div>
                                         );
                                     } else if (today === dailyDay && k.sticker_path === null) {
-										dailyArray[i] = (
+                                        dailyArray[i] = (
                                             <div className="dayBox" key={i}>
                                                 <div>
                                                     <p>{v == 0 ? "" : v}</p>
@@ -704,7 +767,7 @@ const main = memo(() => {
                                                 </div>
                                             </div>
                                         );
-									}
+                                    }
                                 });
                             return dailyArray[i];
                         })}

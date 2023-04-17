@@ -98,6 +98,21 @@ export const putItem = createAsyncThunk<info, info, { rejectValue: Error }>("dai
     return result;
 });
 
+export const putSticker = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/putSticker", async (payload, { rejectWithValue }) => {
+    let result: info = {};
+
+    try {
+        const response = await axios.put(`/daily/sticker/${payload.id}`, payload);
+        result = response.data.data;
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+        }
+    }
+
+    return result;
+});
+
 export const deleteItem = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/deleteItem", async (payload, { rejectWithValue }) => {
     let result: info = {};
 
@@ -178,6 +193,17 @@ const dailySlice = createSlice({
                 state.data = payload;
             })
             .addCase(putItem.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+            })
+            .addCase(putSticker.pending, (state, { payload }) => {
+                state.loading = true;
+            })
+            .addCase(putSticker.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.data = payload;
+            })
+            .addCase(putSticker.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             })
