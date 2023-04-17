@@ -32,3 +32,5 @@ _files
 .env.*
 dist
 DB
+build
+upload

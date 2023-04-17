@@ -287,8 +287,8 @@ const Container = styled.div`
 
                     a {
                         display: flex;
-                        justify-content: center;
-                        align-items: center;
+                        justify-content: flex-end;
+                        align-items: flex-end;
                         width: 100%;
                         height: 80%;
 

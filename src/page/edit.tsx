@@ -52,17 +52,17 @@ const edit = memo(() => {
                 window.alert("내용이 없습니다.");
             }
 
-            if (id) {
+            if (id && daily && !Array.isArray(daily)) {
                 file
                     ? dispatch(putItem({ id: id, file_path: file.url, content: content })).then((result) => {
                           navigate("/main");
                       })
-                    : dispatch(putItem({ id: id, content: content })).then((result) => {
+                    : dispatch(putItem({ id: id, file_path: daily.file_path, content: content })).then((result) => {
                           navigate("/main");
                       });
             }
         },
-        [file],
+        [file, daily],
     );
 
     return (
