@@ -16,7 +16,7 @@ interface data {
 }
 
 interface params {
-	[key: string]: string;
+	[key: string]: string | null;
 }
 
 class dailyService {
@@ -107,7 +107,6 @@ class dailyService {
 
 	async addItem(params: params) {
         let dbcon;
-        let data: data;
 
         try {
             dbcon = await DBPool.getConnection();
@@ -116,24 +115,11 @@ class dailyService {
                 "insertItem",
                 {date: params.date, file_path: params.file_path, content: params.content, user_id: params.user_id, sticker_id: params.sticker_id}
             );
-            let [{ insertId, affectedRows }] = await dbcon.query(sql);
+            let [{ affectedRows }] = await dbcon.query(sql);
 
             if (affectedRows === 0) {
                 throw new RuntimeException("저장된 데이터가 없습니다.");
             }
-
-            sql = mybatisMapper.getStatement("dailyMapper", "selectItem", {
-                id: insertId,
-            });
-            let [result] = await dbcon.query(sql);
-
-            if (result.length === 0) {
-                throw new RuntimeException(
-                    "저장된 데이터를 조회할 수 없습니다."
-                );
-            }
-
-            data = result[0];
 
         } catch (err) {
             throw err;
@@ -142,39 +128,23 @@ class dailyService {
                 dbcon.release();
             }
         }
-
-        return data;
     }
 
 	async editItem(params: params) {
         let dbcon;
-        let data: data;
 
         try {
             dbcon = await DBPool.getConnection();
             let sql = mybatisMapper.getStatement(
                 "dailyMapper",
                 "updateItem",
-                {file_path: params.file_path, content: params.content, sticker_id: params.sticker_id}
+                {file_path: params.file_path, content: params.content}
             );
-            let [{ insertId, affectedRows }] = await dbcon.query(sql);
+            let [{ affectedRows }] = await dbcon.query(sql);
 
             if (affectedRows === 0) {
                 throw new RuntimeException("저장된 데이터가 없습니다.");
             }
-
-            sql = mybatisMapper.getStatement("dailyMapper", "selectItem", {
-                id: insertId,
-            });
-            let [result] = await dbcon.query(sql);
-
-            if (result.length === 0) {
-                throw new RuntimeException(
-                    "저장된 데이터를 조회할 수 없습니다."
-                );
-            }
-
-            data = result[0];
 
         } catch (err) {
             throw err;
@@ -183,8 +153,31 @@ class dailyService {
                 dbcon.release();
             }
         }
+    }
 
-        return data;
+	async editSticker(params: params) {
+        let dbcon;
+
+        try {
+            dbcon = await DBPool.getConnection();
+            let sql = mybatisMapper.getStatement(
+                "dailyMapper",
+                "updateSticker",
+                {sticker_id: params.sticker_id}
+            );
+            let [{ affectedRows }] = await dbcon.query(sql);
+
+            if (affectedRows === 0) {
+                throw new RuntimeException("저장된 데이터가 없습니다.");
+            }
+
+        } catch (err) {
+            throw err;
+        } finally {
+            if (dbcon) {
+                dbcon.release();
+            }
+        }
     }
 
 	async deleteItem(id: string) {

@@ -7,19 +7,19 @@ interface info {
 
 interface initialState {
     data: info | info[] | null;
-    check: boolean;
+    file: info | null;
     loading: boolean;
     error: unknown;
 }
 
-export const getList = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/getList", async (payload, { rejectWithValue }) => {
+export const getDaily = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/getDaily", async (payload, { rejectWithValue }) => {
     let result: info = {};
 
     try {
         if (payload) {
             const response = await axios.get("/daily", {
                 params: {
-                    userid: payload.userid,
+                    user_id: payload.user_id,
                     month: payload.month,
                 },
             });
@@ -64,8 +64,8 @@ export const addItem = createAsyncThunk<info, info, { rejectValue: Error }>("dai
     return result;
 });
 
-export const addImg = createAsyncThunk<info[], info, { rejectValue: Error }>("dailySlice/addImg", async (payload, { rejectWithValue }) => {
-    let result = [];
+export const addImg = createAsyncThunk<info, FormData, { rejectValue: Error }>("dailySlice/addImg", async (payload, { rejectWithValue }) => {
+    let result: info = {};
 
     try {
         const response = await axios.post("/dailyimg", payload, {
@@ -102,20 +102,22 @@ const dailySlice = createSlice({
     name: "dailySlice",
     initialState: {
         data: null,
+		file: null,
         loading: false,
         error: null,
     } as initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(getList.pending, (state, { payload }) => {
+            .addCase(getDaily.pending, (state, { payload }) => {
                 state.loading = true;
             })
-            .addCase(getList.fulfilled, (state, { payload }) => {
+            .addCase(getDaily.fulfilled, (state, { payload }) => {
                 state.loading = false;
                 state.data = payload;
+				state.file = null;
             })
-            .addCase(getList.rejected, (state, { payload }) => {
+            .addCase(getDaily.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             })
@@ -147,7 +149,7 @@ const dailySlice = createSlice({
             })
             .addCase(addImg.fulfilled, (state, { payload }) => {
                 state.loading = false;
-                state.data = payload;
+                state.file = payload;
             })
             .addCase(addImg.rejected, (state, { payload }) => {
                 state.loading = false;

@@ -17,9 +17,9 @@ const App = memo(() => {
 			<Route path="/join" element={<Join />} />
 			<Route path="/login" element={<Login />} />
 			<Route path="/main" element={<Main />} />
-			<Route path="/write" element={<Write />} />
-			<Route path="/edit" element={<Edit />} />
-			<Route path="/view" element={<View />} />
+			<Route path="/write/:date" element={<Write />} />
+			<Route path="/edit/:id" element={<Edit />} />
+			<Route path="/view/:id" element={<View />} />
 		</Routes>
 	);
 });

@@ -8,9 +8,9 @@
 
 	<select id="selectList">
 		SELECT d.id, d.date, d.file_path, CONVERT(d.content USING utf8) AS content, s.sticker_path FROM daily AS d
-		INNER JOIN sticker AS s
+		LEFT OUTER JOIN sticker AS s
 		ON d.sticker_id=s.id
-		WHERE d.user_id=#{user_id} AND date_format(d.date, %M)=#{month}
+		WHERE d.user_id=#{user_id} AND date_format(d.date, '%c')=#{month}
 	</select>
 
 	<select id="selectItem">
@@ -18,11 +18,15 @@
 	</select>
 
 	<insert id="insertItem">
-		INSERT INTO daily (date, file_path, content, user_id, sticker_id) VALUES (#{date}, #{file_path}, #{content}, #{user_id}, #{sticker_id})
+		INSERT INTO daily (date, file_path, content, user_id) VALUES (#{date}, #{file_path}, #{content}, #{user_id})
 	</insert>
 
 	<update id="updateItem">
 		UPDATE daily SET file_path=#{file_path}, content=#{content}, sticker_id=#{sticker_id} WHERE id=#{id}
+	</update>
+
+	<update id="updateSticker">
+		UPDATE daily SET sticker_id=#{sticker_id} WHERE id=#{id}
 	</update>
 
 	<delete id="deleteItem">
