@@ -138,7 +138,7 @@ class dailyService {
             let sql = mybatisMapper.getStatement(
                 "dailyMapper",
                 "updateItem",
-                {file_path: params.file_path, content: params.content}
+                {file_path: params.file_path, content: params.content, id: params.id}
             );
             let [{ affectedRows }] = await dbcon.query(sql);
 

@@ -1,13 +1,20 @@
-import React, { memo } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import styled from "styled-components";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import classNames from "classnames";
+import dayjs from "dayjs";
 
 // 레이아웃
 import Layout from "./layout";
 
 // 미디어쿼리
 import mq from "../MediaQuery";
+
+// 슬라이스
+import { getItem, deleteItem } from "../Slice/dailySlice";
+
+// 커스텀 훅
+import { useAppDispatch, useAppSelector } from "../Hook";
 
 // 이미지
 import text from "../assets/img/text.png";
@@ -43,24 +50,11 @@ const Container = styled.div`
             background: url(${frame}) center/cover;
             margin-top: 15px;
 
-            input {
-                display: none;
-            }
-
-            label {
+            img {
                 display: block;
                 width: 460px;
                 height: 410px;
                 margin: 30px 0 0 27px;
-
-                &:hover {
-                    cursor: pointer;
-                }
-
-                img {
-                    width: 100%;
-                    height: 100%;
-                }
             }
         }
 
@@ -81,13 +75,13 @@ const Container = styled.div`
                 height: auto;
                 width: 100%;
                 margin-top: 10px;
-				display: flex;
-				justify-content: flex-end;
+                display: flex;
+                justify-content: flex-end;
 
-				a {
-					text-decoration: none;
-					margin-right: 10px;
-				}
+                a {
+                    text-decoration: none;
+                    margin-right: 10px;
+                }
 
                 button {
                     display: block;
@@ -137,7 +131,7 @@ const Container = styled.div`
 				height: 500px;
 				background-size: 100% 100%;
 
-				label {
+				img {
 					width: 360px;
 					height: 340px;
 					margin: 30px 0 0 20px;
@@ -160,7 +154,7 @@ const Container = styled.div`
 				height: 500px;
 				background-size: 100% 100%;
 
-				label {
+				img {
 					width: 340px;
 					height: 340px;
 					margin: 25px 0 0 20px;
@@ -181,7 +175,7 @@ const Container = styled.div`
 			.img {
 				width: 300px;
 				height: 400px;
-				label {
+				img {
 					width: 260px;
 					height: 270px;
 				}
@@ -196,26 +190,48 @@ const Container = styled.div`
 `;
 
 const view = memo(() => {
+    const { data: daily } = useAppSelector((state) => state.dailySlice);
+    const { data: user } = useAppSelector((state) => state.userSlice);
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    useEffect(() => {
+        if (id) {
+            dispatch(getItem({ id: id }));
+        }
+    }, [user && user !== true && !Array.isArray(user) && user.id]);
+
+    const deleteDaily = useCallback(() => {
+        if (id && window.confirm("정말 삭제할까요?")) {
+            dispatch(deleteItem({ id: id })).then((result) => {
+                window.alert("삭제되었습니다.");
+                navigate("/main");
+            });
+        }
+    }, []);
+
     return (
         <Layout>
-            <Container>
-                <p>2023.04.14</p>
-                <div className="diary">
-                    <div className="img">
-                        <input type="file" id="file" />
-                        <label htmlFor="file">
-                            <img src={text} />
-                        </label>
-                    </div>
-                    <div className="text">
-                        <textarea maxLength={5000} placeholder="내용을 작성해주세요. 최대 5000자까지 가능합니다."></textarea>
-                        <div className="bank">
-                            <NavLink to='/edit'><button type="button">수정하기</button></NavLink>
-							<button type="button">삭제하기</button>
+            {daily && !Array.isArray(daily) && (
+                <Container>
+                    <p>{dayjs(daily.date).format("YYYY.MM.DD")}</p>
+                    <div className="diary">
+                        <div className="img">{typeof daily.file_path === "string" ? <img src={daily.file_path} /> : <img src={text} />}</div>
+                        <div className="text">
+                            <textarea maxLength={5000} placeholder="내용을 작성해주세요. 최대 5000자까지 가능합니다." value={daily.content} readOnly></textarea>
+                            <div className="bank">
+                                <NavLink to={`/edit/${daily.id}`}>
+                                    <button type="button">수정하기</button>
+                                </NavLink>
+                                <button type="button" onClick={deleteDaily}>
+                                    삭제하기
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </Container>
+                </Container>
+            )}
         </Layout>
     );
 });

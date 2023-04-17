@@ -141,16 +141,46 @@ router.post(`${url}img`, (req, res: custom, next) => {
     });
 });
 
+router.put(`${url}/:id`, async (req, res: custom, next) => {
+    const { id } = req.params;
+	const {file_path, content} = req.body;
+
+	try {
+        regexHelper.value(content, "내용이 없습니다.");
+    } catch (err) {
+        return next(err);
+    }
+
+    try {
+		if (file_path) {
+			const params = {
+				id: id,
+				file_path: file_path,
+				content: content
+			};
+			await dailyService.editItem(params);
+		} else {
+			const params = {
+				id: id,
+				file_path: null,
+				content: content
+			};
+			await dailyService.editItem(params);
+		}
+        
+    } catch (err) {
+        return next(err);
+    }
+
+    if (res.sendResult) {
+        res.sendResult();
+    }
+});
+
 router.delete(`${url}/:id`, async (req, res: custom, next) => {
     const { id } = req.params;
 
     try {
-        let json = await dailyService.getItem(id);
-        fs.unlink(`./_files${json.file_path}`, (err) => {
-            if (err) {
-                return next(err);
-            }
-        });
         await dailyService.deleteItem(id);
     } catch (err) {
         return next(err);

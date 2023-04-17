@@ -22,7 +22,7 @@
 	</insert>
 
 	<update id="updateItem">
-		UPDATE daily SET file_path=#{file_path}, content=#{content}, sticker_id=#{sticker_id} WHERE id=#{id}
+		UPDATE daily SET file_path=#{file_path}, content=#{content} WHERE id=#{id}
 	</update>
 
 	<update id="updateSticker">

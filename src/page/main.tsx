@@ -12,7 +12,7 @@ import mq from "../MediaQuery";
 
 // 슬라이스
 import { addImg, addItem, getList, deleteItem } from "../Slice/stickerSlice";
-import dailySlice, { getDaily } from "../Slice/dailySlice";
+import { getDaily } from "../Slice/dailySlice";
 
 // 커스텀 훅
 import { useAppDispatch, useAppSelector } from "../Hook";
@@ -474,8 +474,6 @@ const main = memo(() => {
             dispatch(getDaily({ user_id: user.id, month: day.month }));
         }
     }, [user && user !== true && !Array.isArray(user) && user.id, day.month]);
-	console.log(daily);
-
 
     // 달력 그리기
     const calendar = useCallback((year: number, month: number) => {

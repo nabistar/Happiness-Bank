@@ -83,11 +83,26 @@ export const addImg = createAsyncThunk<info, FormData, { rejectValue: Error }>("
     return result;
 });
 
+export const putItem = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/putItem", async (payload, { rejectWithValue }) => {
+    let result: info = {};
+
+    try {
+        const response = await axios.put(`/daily/${payload.id}`, payload);
+        result = response.data.data;
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            return rejectWithValue(err.response?.data);
+        }
+    }
+
+    return result;
+});
+
 export const deleteItem = createAsyncThunk<info, info, { rejectValue: Error }>("dailySlice/deleteItem", async (payload, { rejectWithValue }) => {
     let result: info = {};
 
     try {
-        const response = await axios.delete(`/daily${payload.id}`);
+        const response = await axios.delete(`/daily/${payload.id}`);
         result = response.data.data;
     } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -102,7 +117,7 @@ const dailySlice = createSlice({
     name: "dailySlice",
     initialState: {
         data: null,
-		file: null,
+        file: null,
         loading: false,
         error: null,
     } as initialState,
@@ -115,7 +130,7 @@ const dailySlice = createSlice({
             .addCase(getDaily.fulfilled, (state, { payload }) => {
                 state.loading = false;
                 state.data = payload;
-				state.file = null;
+                state.file = null;
             })
             .addCase(getDaily.rejected, (state, { payload }) => {
                 state.loading = false;
@@ -152,6 +167,17 @@ const dailySlice = createSlice({
                 state.file = payload;
             })
             .addCase(addImg.rejected, (state, { payload }) => {
+                state.loading = false;
+                state.error = payload;
+            })
+            .addCase(putItem.pending, (state, { payload }) => {
+                state.loading = true;
+            })
+            .addCase(putItem.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                state.data = payload;
+            })
+            .addCase(putItem.rejected, (state, { payload }) => {
                 state.loading = false;
                 state.error = payload;
             })
