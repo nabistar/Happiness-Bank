@@ -9,6 +9,7 @@ import Main from './page/main';
 import Write from './page/write';
 import Edit from './page/edit';
 import View from './page/view';
+import NotFound from './page/notFound';
 
 const App = memo(() => {
 	return (
@@ -20,6 +21,7 @@ const App = memo(() => {
 			<Route path="/write/:date" element={<Write />} />
 			<Route path="/edit/:id" element={<Edit />} />
 			<Route path="/view/:id" element={<View />} />
+			<Route path="/*" element={<NotFound />} />
 		</Routes>
 	);
 });
