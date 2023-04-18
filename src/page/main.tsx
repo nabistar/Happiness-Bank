@@ -504,7 +504,7 @@ const main = memo(() => {
         if (user && user !== true && !Array.isArray(user)) {
             dispatch(getDaily({ user_id: user.id, month: day.month }));
         }
-    }, [user && user !== true && !Array.isArray(user) && user.id, day.month, stick]);
+    }, [user && user !== true && !Array.isArray(user) && user.id, day.month, stick, Array.isArray(daily) && daily.length]);
 
     // 달력 그리기
     const calendar = useCallback((year: number, month: number) => {
