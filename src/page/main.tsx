@@ -271,6 +271,22 @@ const Container = styled.div`
                     padding-bottom: 57%;
                 }
 
+				&:nth-of-type(7n+1), &:nth-of-type(1) {
+					div {
+						p {
+							color: #f00;
+						}
+					}
+				}
+
+				&:nth-of-type(7n) {
+					div {
+						p {
+							color: #00f;
+						}
+					}
+				}
+
                 div {
                     width: 100%;
                     height: 100%;

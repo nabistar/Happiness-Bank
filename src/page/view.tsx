@@ -52,9 +52,9 @@ const Container = styled.div`
 
             img {
                 display: block;
-                width: 460px;
-                height: 410px;
-                margin: 30px 0 0 27px;
+                width: 475px;
+                height: 425px;
+                margin: 24px 0 0 20px;
             }
         }
 
@@ -105,6 +105,7 @@ const Container = styled.div`
     ${mq.maxWidth("max")`
 		width: 80%;
 		margin: auto;
+		padding: 30px 10px;
 
 		.diary {
 			margin-top: 30px;
@@ -123,6 +124,7 @@ const Container = styled.div`
 	`}
 
     ${mq.maxWidth("md")`
+		width: 85%;
 
 		.diary {
 			
@@ -132,9 +134,9 @@ const Container = styled.div`
 				background-size: 100% 100%;
 
 				img {
-					width: 360px;
-					height: 340px;
-					margin: 30px 0 0 20px;
+					width: 370px;
+					height: 352px;
+					margin: 20px 0 0 15px;
 				}
 			}
 
@@ -146,7 +148,7 @@ const Container = styled.div`
 	`}
 
 	${mq.maxWidth("sm")`
-		width: 90%;
+		width: 100%;
 		.diary {
 			
 			.img {
@@ -155,9 +157,9 @@ const Container = styled.div`
 				background-size: 100% 100%;
 
 				img {
-					width: 340px;
-					height: 340px;
-					margin: 25px 0 0 20px;
+					width: 351px;
+					height: 352px;
+					margin: 20px 0 0 15px;
 				}
 			}
 
@@ -176,8 +178,9 @@ const Container = styled.div`
 				width: 300px;
 				height: 400px;
 				img {
-					width: 260px;
-					height: 270px;
+					width: 277px;
+					height: 282px;
+					margin: 16px 0 0 12px;
 				}
 			}
 

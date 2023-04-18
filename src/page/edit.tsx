@@ -14,7 +14,7 @@ import { getItem, addImg, putItem } from "../Slice/dailySlice";
 import { useAppDispatch, useAppSelector } from "../Hook";
 
 // 이미지
-import text from "../assets/img/text.png";
+import img from "../assets/img/img.png";
 
 const edit = memo(() => {
     const { data: daily } = useAppSelector((state) => state.dailySlice);
@@ -77,7 +77,7 @@ const edit = memo(() => {
                                 <label htmlFor="file">{file && typeof file.url === "string" ? (
 									<img src={file.url} />
 								): (
-									typeof daily.file_path === "string" ? <img src={daily.file_path} /> : <img src={text} />
+									typeof daily.file_path === "string" ? <img src={daily.file_path} /> : <img src={img} />
 								)}</label>
                             </div>
                             <div className="text">

@@ -105,7 +105,7 @@ const login = memo(() => {
 			if (!(result.payload instanceof Error) && result.payload?.rtcode === 200){
 				navigate("/main");
 			} else if (!(result.payload instanceof Error) && result.payload?.rtcode === 404) {
-				window.alert("존재하지 않는 사용자입니다.");
+				window.alert("아이디나 비밀번호를 확인해주세요.");
 			}
 		});
         

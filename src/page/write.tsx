@@ -14,7 +14,7 @@ import { addItem, addImg } from "../Slice/dailySlice";
 import { useAppDispatch, useAppSelector } from "../Hook";
 
 // 이미지
-import text from "../assets/img/text.png";
+import img from "../assets/img/img.png";
 
 const write = memo(() => {
     const { date } = useParams();
@@ -64,7 +64,7 @@ const write = memo(() => {
                         <div className="img">
                             <input type="file" id="file" name="daily" onChange={dailyImgAdd} />
                             <label htmlFor="file">
-                                <img src={file ? file.url : text} />
+                                <img src={file ? file.url : img} />
                             </label>
                         </div>
                         <div className="text">
